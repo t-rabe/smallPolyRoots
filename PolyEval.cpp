@@ -28,9 +28,11 @@ void PolyEval::evalPixel(int startReal, int endReal) {
     double tolerance = 0.0;
     double realVal = 0.0;
     double imgVal = 0.0;
-    // complex<double> firstCoeff = abs(vectPolyToUse[0]);
+    double firstCoeff = abs(vectPolyToUse[0]);
     // complex<double> secCoeff = abs(vectPolyToUse[1]);    
-    complex<double> firstCoeff = abs(vectPolyToUse[0]-vectPolyToUse[1]);
+    // complex<double> firstCoeff = abs(vectPolyToUse[0]-vectPolyToUse[1]);
+    // complex<double> firstCoeff = vectPolyToUse[0]+vectPolyToUse[1];
+    complex<double> loc = {0.0,0.0};
 
     for (int k=startReal; k<endReal; k++) {
         for (int m=0; m<imgSize; m++) {
@@ -38,8 +40,9 @@ void PolyEval::evalPixel(int startReal, int endReal) {
             // tempCoeffs = kit.horner7(vectPolyToUse, polySize, {realSpaced[k],imgSpaced[m]});
             realVal = realSpaced[k];
             imgVal = imgSpaced[m];
-            // tolerance = abs((firstCoeff)*(sqrt((realVal*realVal)+(imgVal*imgVal))));
-            tolerance = abs((firstCoeff)*((realVal*realVal)+(imgVal*imgVal)));
+            loc = {realVal,imgVal};
+            tolerance = firstCoeff *pow((abs(loc)),4000);
+            // tolerance = abs((firstCoeff)*((realVal*realVal)+(imgVal*imgVal)));
             // tolerance = k *1.0;
             if (abs(kit.horner7(vectPolyToUse, polySize, {realVal,imgVal})) < tolerance) {
                 binCountVect[k][m] ++;

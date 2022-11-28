@@ -29,7 +29,7 @@ int main()
     Tools kit;
     int sideLen = 1800;
     int polySize = 4000;
-    int numSamples = 15;
+    int numSamples = 7;
     bool polyIsArr = false;
     int poly[] = {2, -6, 2, -1, 1, -1, 1};
     float poly3[] = {2., -6., 2., -1., 1., -1., 1.};
