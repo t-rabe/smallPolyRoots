@@ -1,0 +1,49 @@
+### ignore all csv files
+
+### ignore vscode and jupyter files
+
+.vscode/
+.ipynb_checkpoints/
+
+
+### build folder to be ignored except for .gitkeep
+
+build/*
+!build/.gitkeep
+
+### C++ files to be ignored
+
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+# *.txt
+*.bin
