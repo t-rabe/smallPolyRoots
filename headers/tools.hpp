@@ -21,7 +21,7 @@ class Tools{
         vector<float> horner4(vector<float> poly5, int n5, float x5);
         float* horner5(float poly6[], int n6, float x6);
         vector<complex<double>> horner6(vector<complex<double>> poly7, int n7, complex<double> x7);
-        complex<double> horner7(vector<complex<double>> poly7, int n7, complex<double> x7);
+        complex<double> horner7(vector<complex<double>> poly7, int n7, complex<double> x7, double bigBoy);
         vector<double> linspace(double start_in, double end_in, int num_in);
 };
 

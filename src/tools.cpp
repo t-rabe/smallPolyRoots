@@ -79,15 +79,19 @@ vector<complex<double>> Tools::horner6(vector<complex<double>> poly7, int n7, co
 }
 
 // just like horner2 BUT it takes in a complex vector instead of complex array
-complex<double> Tools::horner7(vector<complex<double>> poly7, int n7, complex<double> x7)
+complex<double> Tools::horner7(vector<complex<double>> poly7, int n7, complex<double> x7, double bigBoy)
 {
     complex<double> result7 = poly7[0]; // Initialize result
- 
+    // double bigBoy = pow(10,200);
     // Evaluate value of polynomial using Horner's method
     for (int i=1; i<n7; i++)
         result7 = result7*x7 + poly7[i];
- 
-    return result7;
+    if (abs(result7) < bigBoy) {
+        return result7;
+    }
+    else {
+        return 0;
+    }
 }
 
 // Used to get evenly spaced numbers over a certain range

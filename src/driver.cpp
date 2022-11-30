@@ -28,9 +28,10 @@ int main()
     auto start = std::chrono::high_resolution_clock::now();
     Tools kit;
     int sideLen = 1800;
-    int polySize = 4000;
-    int numSamples = 7;
+    int polySize = 8000;
+    int numSamples = 15;
     bool polyIsArr = false;
+    double largeNum = pow(10,300);
     // int poly[] = {2, -6, 2, -1, 1, -1, 1};
     // float poly3[] = {2., -6., 2., -1., 1., -1., 1.};
     // int poly4[] = {2, -6, 2, -1, 1, -1, 1, 1,-1, 2, -6, 2, -1, 1, -1, 1, 1,-1};
@@ -42,33 +43,6 @@ int main()
     // int x = 3;
     // float x3 = 3.;
     // float x6 = 3.;
-    // complex<double> poly2[] = {{2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.},
-    //                             {2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.},
-    //                             {2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.},
-    //                             {2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.},
-    //                             {2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.},
-    //                             {2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.},
-    //                             {2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.},
-    //                             {2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.},
-    //                             {2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.},
-    //                             {2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.},
-    //                             {2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.},
-    //                             {2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.},
-    //                             {2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.},
-    //                             {2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.},
-    //                             {2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.},
-    //                             {2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.},
-    //                             {2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.},
-    //                             {2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.},
-    //                             {2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.},
-    //                             {2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.},
-    //                             {2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.},
-    //                             {2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.},
-    //                             {2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.},
-    //                             {2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.},
-    //                             {2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.},
-    //                             {2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.},
-    //                             {2.,0.}, {-6.,0.}, {2.,0.}, {-1.,0.}, {1.,0.}, {-1.,0.}, {1.,0.}, {-6.,0.}};
     complex<double> x2 {3.,0};
     // int n = sizeof(poly)/sizeof(poly[0]);
     // int n2 = sizeof(poly2)/sizeof(poly2[0]);
@@ -87,26 +61,26 @@ int main()
     RandCoeffs realcoeffs(polySize,1,1);
     RandCoeffs imgcoeffs(polySize,1,2);
 
-    // // THIS CREATES NEW COEFFS AND WRITES THEM TO A FILE TO BE REUSED
+    // THIS CREATES NEW COEFFS AND WRITES THEM TO A FILE TO BE REUSED
     // vector<double> realP = realcoeffs.getTotSample();
     // vector<double> imgP = imgcoeffs.getTotSample();
-    // ofstream coeffFile;
-    // coeffFile.open("testCoeffs.csv");
+    // ofstream coeffFile0;
+    // coeffFile0.open("../src/testCoeffs2.csv");
     // for (int m=0; m<realP.size(); m++) {
-    //     coeffFile << realP[m] << '\n';
+    //     coeffFile0 << realP[m] << '\n';
     // }
     // for (int n=0; n<imgP.size() -1; n++) {
-    //     coeffFile << imgP[n] << '\n';
+    //     coeffFile0 << imgP[n] << '\n';
     // }
-    // coeffFile << imgP[imgP.size() -1];
-    // coeffFile.close();
+    // coeffFile0 << imgP[imgP.size() -1];
+    // coeffFile0.close();
 
     // // THIS IS THE ALTERNATIVE TO THE ABOVE
     // // IT JUST READS PREVIOUSLY SAVED COEFFS FROM A FILE CALLED "testCoeffs.csv"
     vector<double> realP;
     vector<double> imgP;
     ifstream coeffFile;
-    coeffFile.open("../src/testCoeffs.csv");
+    coeffFile.open("../src/testCoeffs2.csv");
     string coeff;
     double coeffDoub;
     int lineNum = 0;
@@ -131,18 +105,19 @@ int main()
     // cout << nToUse << " here\n";
 
     ofstream myFile;
+    // ofstream myFile2;
     std::cout << "Done here." << endl;
 
-    auto start2 = std::chrono::high_resolution_clock::now();
-    // for (int i=0; i<1000000; i++) {
-    //     kit.horner3(poly3, n3, x3);
-    // }
-    auto end2 = std::chrono::high_resolution_clock::now();
-    auto start3 = std::chrono::high_resolution_clock::now();
-    // for (int i=0; i<1000000; i++) {
-    //     kit.horner2(polyToUse, polySize, x2);
-    // }
-    auto end3 = std::chrono::high_resolution_clock::now();
+    // auto start2 = std::chrono::high_resolution_clock::now();
+    // // for (int i=0; i<1000000; i++) {
+    // //     kit.horner3(poly3, n3, x3);
+    // // }
+    // auto end2 = std::chrono::high_resolution_clock::now();
+    // auto start3 = std::chrono::high_resolution_clock::now();
+    // // for (int i=0; i<1000000; i++) {
+    // //     kit.horner2(polyToUse, polySize, x2);
+    // // }
+    // auto end3 = std::chrono::high_resolution_clock::now();
     // cout << "Value of polynomial is " << kit.horner(poly, n, x) << endl;
     // cout << "Value of polynomial is " << kit.horner3(poly3, n3, x3) << endl;
     // cout << "Value of polynomial is ";
@@ -166,10 +141,11 @@ int main()
     // vector<int> binCountVect((sideLen*sideLen),0);
     // int binCountArr[sideLen *sideLen] = {0};
 
-    PolyEval polyeval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples);
-    vector<vector<int>> binCountVect = polyeval.getBinCount();
+    PolyEval polyeval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,largeNum);
 
-    myFile.open("../output/test51.csv");
+    auto start2 = std::chrono::high_resolution_clock::now();
+
+    myFile.open("../output/testMin01.csv");
     // tempCoeffs = kit.horner6(vectPolyToUse, polySize, {1.,0.2});
     // for (int j=0; j<polySize; j++) {
     //     cout << tempCoeffs[j] << '\n';
@@ -230,22 +206,47 @@ int main()
     //     // }
     // }
 
-    // cout << "Root num: " << rootNum << '\n';
+    vector<vector<int>> binCountVect = polyeval.getBinCount2();
+    auto start3 = std::chrono::high_resolution_clock::now();
     for (int g=0; g<sideLen; g++) {
         myFile << binCountVect[g][0];
         for (int h=1; h<sideLen; h++) {
             myFile << ',' << binCountVect[g][h];
         }
-        // myFile << binCountArr[g] << '\n';
         myFile << '\n';
     }
+
+    // vector<vector<double>> pixValVect = polyeval.getPixelVal();
+    // for (int g=0; g<sideLen; g++) {
+    //     myFile << pixValVect[g][0];
+    //     for (int h=1; h<sideLen; h++) {
+    //         myFile << ',' << pixValVect[g][h];
+    //     }
+    //     myFile << '\n';
+    // }
+
     myFile.close();
+
+    // myFile2.open("../output/testMax00.csv");
+
+    // vector<vector<int>> maxBinCount = polyeval.getMaxBinCount();
+    // for (int m=0; m<sideLen; m++) {
+    //     myFile2 << maxBinCount[m][0];
+    //     for (int n=1; n<sideLen; n++) {
+    //         myFile2 << ',' << maxBinCount[m][n];
+    //     }
+    //     myFile2 << '\n';
+    // }
+
+    // myFile2.close();
     
     auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::seconds>(end-start);
-    auto duration2 = std::chrono::duration_cast<std::chrono::nanoseconds>(end2-start2);
-    auto duration3 = std::chrono::duration_cast<std::chrono::nanoseconds>(end3-start3);
-    std::cout << "Iteration time: " << duration2.count() / 1000000.0 << "ns\nIteration2 time: " << 
-        duration3.count() / 1000000.0 << "ns\nTotal time: " << duration.count() << "s\n";
+    auto duration = std::chrono::duration_cast<std::chrono::seconds>(start3-start2);
+    auto duration2 = std::chrono::duration_cast<std::chrono::milliseconds>(end-start3);
+    auto duration3 = std::chrono::duration_cast<std::chrono::seconds>(end-start);
+    // std::cout << "Iteration time: " << duration2.count() / 1000000.0 << "ns\nIteration2 time: " << 
+        // duration3.count() / 1000000.0 << "ns\nTotal time: " << duration.count() << "s\n";
+    std::cout << "Get bin counts: " << duration.count() << "s\nWrite file: " << duration2.count() <<
+                "ms\nTotal time: " << duration3.count() << "s\n";
     return 0;
 }
