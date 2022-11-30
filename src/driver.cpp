@@ -146,7 +146,7 @@ int main()
     HalfPolyEval halfpolyeval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,largeNum);
     auto start2 = std::chrono::high_resolution_clock::now();
 
-    myFile.open("../output/testMin03.csv");
+    myFile.open("../output/testMin04.csv");
     // tempCoeffs = kit.horner6(vectPolyToUse, polySize, {1.,0.2});
     // for (int j=0; j<polySize; j++) {
     //     cout << tempCoeffs[j] << '\n';
