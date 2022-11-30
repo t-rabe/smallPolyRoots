@@ -27,7 +27,7 @@ int main()
 {
     auto start = std::chrono::high_resolution_clock::now();
     Tools kit;
-    int sideLen = 1800;
+    int sideLen = 7200;
     int polySize = 8000;
     int numSamples = 15;
     bool polyIsArr = false;
@@ -106,7 +106,7 @@ int main()
 
     ofstream myFile;
     // ofstream myFile2;
-    std::cout << "Done here." << endl;
+    std::cout << "Done here. Number of Samples: " << numSamples << endl;
 
     // auto start2 = std::chrono::high_resolution_clock::now();
     // // for (int i=0; i<1000000; i++) {

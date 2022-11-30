@@ -47,8 +47,8 @@ vector<vector<double>> RandCoeffs::getSample() {
 // returns the whole random vector in 1 dimension
 vector<double> RandCoeffs::getTotSample() {
     vector<double> totSample;
-    for (int i=0; i<samples.size(); i++) {
-        for (int k=0; k<samples[0].size(); k++) {
+    for (long unsigned int i=0; i<samples.size(); i++) {
+        for (long unsigned int k=0; k<samples[0].size(); k++) {
             totSample.push_back(samples[i][k]);
         }
     }
