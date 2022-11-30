@@ -23,6 +23,8 @@ file(GLOB USER_FILES_1
 "./src/driver.cpp"
 "./src/PolyEval.cpp"
 "./headers/PolyEval.hpp"
+"./src/HalfPolyEval.cpp"
+"./headers/HalfPolyEval.hpp"
 "./src/Polynomial.cpp"
 "./headers/Polynomial.hpp"
 "./src/RandCoeffs.cpp"

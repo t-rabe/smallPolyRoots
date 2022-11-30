@@ -1,5 +1,5 @@
-#ifndef POLYEVAL_H
-#define POLYEVAL_H
+#ifndef HALFPOLYEVAL_H
+#define HALFPOLYEVAL_H
 #define _USE_MATH_DEFINES
 
 #include <iostream>
@@ -15,12 +15,13 @@
 
 using namespace std;
 
-class PolyEval{
+class HalfPolyEval{
 	private:
 		int numPoints; // total # of points to plot (length of the total random vect)
         int numSamples; // # of vectors for the total vect to be split into
 		int genNum; // used to differentiate between real and img parts so they dont get same vals
 		int imgSize;
+        int twoImgSize;
         int realSpan;
 		double bigBoy;
         vector<complex<double>> vectPolyToUse;
@@ -52,11 +53,12 @@ class PolyEval{
 		void combineColRow();
 		void combineColRow2();
 	public:
-		PolyEval(vector<complex<double>> vectPolyToUse_, Tools kit_, vector<double> realSpaced_, vector<double> imgSpaced_, int polySize_, int imgSize_, int numSamples_, double bigBoy_);
-		PolyEval() = default; // pass in default constructor
-		~PolyEval() = default;
+		HalfPolyEval(vector<complex<double>> vectPolyToUse_, Tools kit_, vector<double> realSpaced_, vector<double> imgSpaced_, int polySize_, int imgSize_, int numSamples_, double bigBoy_);
+		HalfPolyEval() = default; // pass in default constructor
+		~HalfPolyEval() = default;
 		vector<vector<int>> getBinCount();
 		vector<vector<int>> getBinCount2();
+		vector<vector<int>> getHalfBinCount2();
 		vector<vector<int>> getMaxBinCount();
 		vector<vector<double>> getPixelVal();
 		vector<vector<int>> getMinPeaks();

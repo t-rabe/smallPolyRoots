@@ -13,6 +13,7 @@
 #include "../headers/Polynomial.hpp"
 #include "../headers/RandCoeffs.hpp"
 #include "../headers/PolyEval.hpp"
+#include "../headers/HalfPolyEval.hpp"
 
 using namespace std;
 
@@ -27,7 +28,7 @@ int main()
 {
     auto start = std::chrono::high_resolution_clock::now();
     Tools kit;
-    int sideLen = 7200;
+    int sideLen = 1800;
     int polySize = 8000;
     int numSamples = 15;
     bool polyIsArr = false;
@@ -142,10 +143,10 @@ int main()
     // int binCountArr[sideLen *sideLen] = {0};
 
     PolyEval polyeval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,largeNum);
-
+    HalfPolyEval halfpolyeval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,largeNum);
     auto start2 = std::chrono::high_resolution_clock::now();
 
-    myFile.open("../output/testMin01.csv");
+    myFile.open("../output/testMin03.csv");
     // tempCoeffs = kit.horner6(vectPolyToUse, polySize, {1.,0.2});
     // for (int j=0; j<polySize; j++) {
     //     cout << tempCoeffs[j] << '\n';
@@ -206,15 +207,38 @@ int main()
     //     // }
     // }
 
-    vector<vector<int>> binCountVect = polyeval.getBinCount2();
+    vector<vector<int>> halfBinVect = halfpolyeval.getBinCount2();
     auto start3 = std::chrono::high_resolution_clock::now();
     for (int g=0; g<sideLen; g++) {
-        myFile << binCountVect[g][0];
-        for (int h=1; h<sideLen; h++) {
-            myFile << ',' << binCountVect[g][h];
+        myFile << halfBinVect[g][0];
+        for (int h=1; h<(sideLen/2); h++) {
+            myFile << ',' << halfBinVect[g][h];
+        }
+        for (int i=((sideLen/2)-1); i>=0; i--) {
+            myFile << ',' << halfBinVect[g][i];
         }
         myFile << '\n';
     }
+
+    // vector<vector<int>> minPeakValVect = polyeval.getMinPeaks();
+    // auto start3 = std::chrono::high_resolution_clock::now();
+    // for (int g=0; g<sideLen; g++) {
+    //     myFile << minPeakValVect[g][0];
+    //     for (int h=1; h<sideLen; h++) {
+    //         myFile << ',' << minPeakValVect[g][h];
+    //     }
+    //     myFile << '\n';
+    // }
+
+    // vector<vector<int>> binCountVect = polyeval.getBinCount2();
+    // auto start3 = std::chrono::high_resolution_clock::now();
+    // for (int g=0; g<sideLen; g++) {
+    //     myFile << binCountVect[g][0];
+    //     for (int h=1; h<sideLen; h++) {
+    //         myFile << ',' << binCountVect[g][h];
+    //     }
+    //     myFile << '\n';
+    // }
 
     // vector<vector<double>> pixValVect = polyeval.getPixelVal();
     // for (int g=0; g<sideLen; g++) {
