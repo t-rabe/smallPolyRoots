@@ -25,12 +25,14 @@ using namespace std;
 int main()
 {
     auto start = std::chrono::high_resolution_clock::now();
-    string fileNum = "1800_4000";
+    string fileNum = "1020_500_ONES";
     string fileName = "../output/pixEval_" + fileNum + ".csv";
     
-    int sideLen = 1800; // side length (in pixels) of the resulting image
-    int polySize = 4000; // degree of the polynomial to be used
+    int sideLen = 1020; // side length (in pixels) of the resulting image
+    int polySize = 24; // degree of the polynomial to be used
     int numSamples = 15;
+    int numPolys = 500; // NEEDS TO BE LARGER THAN NUMSAMPLES !!!!!
+    int coeffSize = (polySize *numPolys); // num coeffs to load for real/img
     bool polyIsArr = false;
 
     Tools kit;
@@ -42,7 +44,6 @@ int main()
     /**
      * THIS CREATES NEW COEFFS AND WRITES THEM TO A FILE TO BE REUSED
     */
-
     // RandCoeffs realcoeffs(polySize,1,1);
     // RandCoeffs imgcoeffs(polySize,1,2);
     // vector<double> realP = realcoeffs.getTotSample();
@@ -58,6 +59,20 @@ int main()
     // coeffFile0 << imgP[imgP.size() -1];
     // coeffFile0.close();
 
+    /**
+     * THIS CREATES NEW COEFFS AND WRITES THEM TO A FILE TO BE REUSED
+     * EXCLUSIVELY 1 OR -1, ONE MILLION OF THEM
+    */
+    // RandCoeffs onescoeffs(1000000,1,1);
+    // vector<double> realP = onescoeffs.getTotSampleOnes();
+    // ofstream coeffFile0;
+    // coeffFile0.open("../src/testCoeffsOnes.csv");
+    // for (int m=0; m<realP.size() -1; m++) {
+    //     coeffFile0 << realP[m] << '\n';
+    // }
+    // coeffFile0 << realP[realP.size() -1];
+    // coeffFile0.close();
+
 
     /**
      * THIS IS THE ALTERNATIVE TO THE ABOVE
@@ -66,7 +81,7 @@ int main()
     vector<double> realP; // real part of each coeff
     vector<double> imgP; // complex part of each coeff
     ifstream coeffFile;
-    coeffFile.open("../src/testCoeffs.csv"); // file holding old coeffs
+    coeffFile.open("../src/testCoeffsOnes.csv"); // file holding old coeffs
     string coeff;
     double coeffDoub;
     int lineNum = 0;
@@ -74,34 +89,35 @@ int main()
         while (coeffFile) {
             getline(coeffFile,coeff);
             coeffDoub = stod(coeff);
-            if (lineNum < polySize) {
+            if (lineNum < coeffSize) {
                 realP.push_back(coeffDoub);
+                imgP.push_back(0.0); // uncomment to keep real coeffs
             }
-            else if (lineNum < (polySize*2)) {
-                // imgP.push_back(coeffDoub); // uncomment to add complex coeffs
-                imgP.push_back(0.1); // uncomment to keep real coeffs
-            }
+            // else if (lineNum < (coeffSize*2)) {
+            //     // imgP.push_back(coeffDoub); // uncomment to add complex coeffs
+            //     imgP.push_back(0.0); // uncomment to keep real coeffs
+            // }
             lineNum ++;
         }
     }
-    Polynomial polynomial(realP, imgP, polySize, polyToUse, polyIsArr);
+    Polynomial polynomial(realP, imgP, coeffSize, polyToUse, polyIsArr);
     polyToUse = polynomial.getArrPoly();
     vectPolyToUse = polynomial.getVectPoly();
 
     std::cout << "Done here. Number of Samples: " << numSamples << endl;
     
-    vector<double> realSpaced = kit.linspace(-1.1,1.1,sideLen);
-    vector<double> imgSpaced = kit.linspace(-1.1,1.1,sideLen);
+    vector<double> realSpaced = kit.linspace(-1.8,1.8,sideLen);
+    vector<double> imgSpaced = kit.linspace(-1.8,1.8,sideLen);
     // vector<double> realSpaced = kit.linspace(.55,.75,sideLen);
     // vector<double> imgSpaced = kit.linspace(-.85,-.65,sideLen);
     
     PolyEval polyeval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,largeNum);
-    HalfPolyEval halfpolyeval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,largeNum);
+    HalfPolyEval halfpolyeval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,numPolys,largeNum);
     FlatHalfPoly flathalfpoly(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,largeNum);
-    auto start2 = std::chrono::high_resolution_clock::now();
     
     ofstream myFile;
     myFile.open(fileName);
+    auto start2 = std::chrono::high_resolution_clock::now();
 
     /**
      * @brief creates the minCol/minRow vector
@@ -122,18 +138,18 @@ int main()
      * @return 2D VECTOR and ONLY HALF of the image
      * @note VERY EFFICIENT AND CAN ONLY BE USED WITH COMPLEX CONJ. ROOT THRM. (CCRT)
      */
-    // vector<vector<int>> halfBinVect = halfpolyeval.getBinCount2();
-    // auto start3 = std::chrono::high_resolution_clock::now();
-    // for (int g=0; g<sideLen; g++) {
-    //     myFile << halfBinVect[g][0];
-    //     for (int h=1; h<(sideLen/2); h++) {
-    //         myFile << ',' << halfBinVect[g][h];
-    //     }
-    //     for (int i=((sideLen/2)-1); i>=0; i--) {
-    //         myFile << ',' << halfBinVect[g][i];
-    //     }
-    //     myFile << '\n';
-    // }
+    vector<vector<int>> halfBinVect = halfpolyeval.getBinCount3();
+    auto start3 = std::chrono::high_resolution_clock::now();
+    for (int g=0; g<sideLen; g++) {
+        myFile << halfBinVect[g][0];
+        for (int h=1; h<(sideLen/2); h++) {
+            myFile << ',' << halfBinVect[g][h];
+        }
+        for (int i=((sideLen/2)-1); i>=0; i--) {
+            myFile << ',' << halfBinVect[g][i];
+        }
+        myFile << '\n';
+    }
 
     /**
      * @brief creates a vector of min peaks (the isolated points and values of 2)
@@ -158,15 +174,15 @@ int main()
      * @return 2D VECTOR and FULL image
      * @note LESS EFICIENT BUT CAN BE USED WITHOUT COMPLEX CONJ. ROOT THRM. (CCRT)
      */
-    vector<vector<int>> binCountVect = polyeval.getBinCount2();
-    auto start3 = std::chrono::high_resolution_clock::now();
-    for (int g=0; g<sideLen; g++) {
-        myFile << binCountVect[g][0];
-        for (int h=1; h<sideLen; h++) {
-            myFile << ',' << binCountVect[g][h];
-        }
-        myFile << '\n';
-    }
+    // vector<vector<int>> binCountVect = polyeval.getBinCount2();
+    // auto start3 = std::chrono::high_resolution_clock::now();
+    // for (int g=0; g<sideLen; g++) {
+    //     myFile << binCountVect[g][0];
+    //     for (int h=1; h<sideLen; h++) {
+    //         myFile << ',' << binCountVect[g][h];
+    //     }
+    //     myFile << '\n';
+    // }
 
     /**
      * @brief creates a vect of pixel values (essentially a better topo map)

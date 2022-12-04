@@ -94,6 +94,63 @@ complex<double> Tools::horner7(vector<complex<double>> poly7, int n7, complex<do
     }
 }
 
+// used to evaluate multiple polynomials at a time and return an array of all results
+// at a given pixel. Splits poly8 into numPoly sections of length n8.
+float* Tools::horner8(vector<complex<double>> poly8, int numPoly8, int n8, complex<double> x8, double bigBoy)
+{
+    float *valsAtPix = new float[numPoly8];
+    float result8 = 0.0;
+    int index = 0;
+    
+    for (int k=0; k<numPoly8; k++) {
+        index = k *n8;
+        complex<double> tempResult = poly8[index]; // the first value of each sub polynomial
+        // Evaluate value of polynomial using Horner's method
+        for (int i=1; i<n8; i++)
+            tempResult = tempResult*x8 + poly8[index +i];
+        result8 = abs(tempResult);
+        if (result8 < bigBoy) {
+            valsAtPix[k] = result8;
+        }
+        else {
+            valsAtPix[k] = 0.0;
+        }
+    }
+    
+    return valsAtPix;
+}
+
+// same as above except RETURNS A VECTOR
+vector<float> Tools::horner9(vector<complex<double>> poly9, int numPoly9, int n9, complex<double> x9, double bigBoy)
+{
+    vector<float> valsAtPix2;
+    complex<double> tempResult2;
+    // float result9 = 0.0;
+    int index2 = 0;
+    
+    for (int k=0; k<numPoly9; k++) {
+        // index2 = k *n9;
+        tempResult2 = poly9[index2]; // the first value of each sub polynomial
+        // Evaluate value of polynomial using Horner's method
+        for (int i=1; i<n9; i++) {
+            index2++;
+            tempResult2 = tempResult2*x9 + poly9[index2];
+            
+        }
+        index2++;
+        valsAtPix2.push_back(abs(tempResult2));
+        // result9 = abs(tempResult2);
+        // if (result9 < bigBoy) {
+        //     valsAtPix2[k] = result9;
+        // }
+        // else {
+        //     valsAtPix2[k] = 0.0;
+        // }
+    }
+    
+    return valsAtPix2;
+}
+
 // Used to get evenly spaced numbers over a certain range
 vector<double> Tools::linspace(double start_in, double end_in, int num_in) {
 	vector<double> linspaced;

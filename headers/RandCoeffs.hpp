@@ -23,14 +23,19 @@ class RandCoeffs{
         int numSamples; // # of vectors for the total vect to be split into
 		int genNum; // used to differentiate between real and img parts so they dont get same vals
 		vector<vector<double>> samples; // a large vect of rand ordered indices split into shorter vects
+		vector<vector<double>> samplesOnes;
 		void threadSafe_Sample();
+		void threadSafe_SampleOnes();
 		void getRandomValue(unsigned int seed, int index);
+		void getRandomValueOnes(unsigned int seed, int index);
 	public:
 		RandCoeffs(int numPoints_, int numSamples_, int genNum_);
 		RandCoeffs() = default; // pass in default constructor
 		~RandCoeffs() = default;
 		vector<vector<double>> getSample();
         vector<double> getTotSample();
+		vector<vector<double>> getSampleOnes();
+        vector<double> getTotSampleOnes();
 };
 
 #endif
