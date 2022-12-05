@@ -2,7 +2,7 @@
 
 
 HalfPolyEval::HalfPolyEval(vector<complex<double>> vectPolyToUse_, Tools kit_, vector<double> realSpaced_, vector<double> imgSpaced_,
-					        int polySize_, int imgSize_, int numSamples_, int numOfPoly_, double bigBoy_) {
+                                                int polySize_, int imgSize_, int numSamples_, int numOfPoly_, double bigBoy_) {
     vectPolyToUse = vectPolyToUse_;
     kit = kit_;
     realSpaced = realSpaced_;
@@ -15,7 +15,7 @@ HalfPolyEval::HalfPolyEval(vector<complex<double>> vectPolyToUse_, Tools kit_, v
     bigBoy = bigBoy_;
     realSpan = floor(realSpaced_.size() /numSamples_);
     polySpan = max(int(floor(numOfPoly /numSamples)), 1);
-    
+
     // creates a 2d vector with (real x img) indices
 
     for (int f=0; f<twoImgSize; f++) {
@@ -128,7 +128,7 @@ void HalfPolyEval::evalPixel(int startReal, int endReal) {
     double imgVal = 0.0;
     double firstCoeff = abs(vectPolyToUse[0]);
     double secCoeff = abs(vectPolyToUse[1]);
-    // complex<double> secCoeff = abs(vectPolyToUse[1]);    
+    // complex<double> secCoeff = abs(vectPolyToUse[1]);
     // complex<double> firstCoeff = abs(vectPolyToUse[0]-vectPolyToUse[1]);
     // complex<double> firstCoeff = vectPolyToUse[0]+vectPolyToUse[1];
     complex<double> loc = {0.0,0.0};
@@ -459,13 +459,9 @@ vector<vector<int>> HalfPolyEval::getBinCount2() {
 
 // returns bin count from combined col/row local mins w/ MULTIPLE POLYNOMIALS
 vector<vector<int>> HalfPolyEval::getBinCount3() {
-    cout << "check1" << '\n';
     threadSafe_Sample6();
-    cout << "check2" << '\n';
     threadSafe_Sample7();
-    cout << "check3" << '\n';
     combineColRow3();
-    cout << "check4" << '\n';
     return binCountVect3;
 }
 

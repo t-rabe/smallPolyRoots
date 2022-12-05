@@ -18,26 +18,26 @@ using namespace std;
 /**
  * @brief MAKE TOLERANCE SMALL, then factor out the found roots and repeat the process
  * adding to the data with each iteration so that it is more contoured
- * 
- * @return int 
+ *
+ * @return int
  */
 
 int main()
 {
     auto start = std::chrono::high_resolution_clock::now();
-    string fileNum = "1020_500_ONES";
+    string fileNum = "2048_5000_ONES8";
     string fileName = "../output/pixEval_" + fileNum + ".csv";
-    
-    int sideLen = 1020; // side length (in pixels) of the resulting image
+
+    int sideLen = 2048; // side length (in pixels) of the resulting image
     int polySize = 24; // degree of the polynomial to be used
-    int numSamples = 15;
-    int numPolys = 500; // NEEDS TO BE LARGER THAN NUMSAMPLES !!!!!
+    int numSamples = 32;
+    int numPolys = 5000; // NEEDS TO BE LARGER THAN NUMSAMPLES !!!!!
     int coeffSize = (polySize *numPolys); // num coeffs to load for real/img
     bool polyIsArr = false;
 
     Tools kit;
     double largeNum = pow(10,300); // upper bound for polyEval vals (above ~ infinity)
-        
+
     complex<double>* polyToUse = new complex<double>[polySize];
     vector<complex<double>> vectPolyToUse;
 
@@ -77,7 +77,7 @@ int main()
     /**
      * THIS IS THE ALTERNATIVE TO THE ABOVE
      * IT JUST READS PREVIOUSLY SAVED COEFFS FROM A FILE CALLED "testCoeffs.csv"
-    */ 
+    */
     vector<double> realP; // real part of each coeff
     vector<double> imgP; // complex part of each coeff
     ifstream coeffFile;
@@ -89,7 +89,7 @@ int main()
         while (coeffFile) {
             getline(coeffFile,coeff);
             coeffDoub = stod(coeff);
-            if (lineNum < coeffSize) {
+            if ((lineNum>7) && (lineNum < coeffSize+7)) {
                 realP.push_back(coeffDoub);
                 imgP.push_back(0.0); // uncomment to keep real coeffs
             }
@@ -105,23 +105,23 @@ int main()
     vectPolyToUse = polynomial.getVectPoly();
 
     std::cout << "Done here. Number of Samples: " << numSamples << endl;
-    
+
     vector<double> realSpaced = kit.linspace(-1.8,1.8,sideLen);
     vector<double> imgSpaced = kit.linspace(-1.8,1.8,sideLen);
     // vector<double> realSpaced = kit.linspace(.55,.75,sideLen);
     // vector<double> imgSpaced = kit.linspace(-.85,-.65,sideLen);
-    
+
     PolyEval polyeval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,largeNum);
     HalfPolyEval halfpolyeval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,numPolys,largeNum);
     FlatHalfPoly flathalfpoly(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,largeNum);
-    
+
     ofstream myFile;
     myFile.open(fileName);
     auto start2 = std::chrono::high_resolution_clock::now();
 
     /**
      * @brief creates the minCol/minRow vector
-     * 
+     *
      * @return FLAT VECTOR and ONLY HALF of the image
      * @note INNEFICIENT AND CAN ONLY BE USED WITH COMPLEX CONJ. ROOT THRM. (CCRT)
      */
@@ -134,7 +134,7 @@ int main()
 
     /**
      * @brief creates the minCol/minRow vector
-     * 
+     *
      * @return 2D VECTOR and ONLY HALF of the image
      * @note VERY EFFICIENT AND CAN ONLY BE USED WITH COMPLEX CONJ. ROOT THRM. (CCRT)
      */
@@ -154,7 +154,7 @@ int main()
     /**
      * @brief creates a vector of min peaks (the isolated points and values of 2)
      *        from the minCol/minRow combined vect
-     * 
+     *
      * @return 2D VECTOR and FULL image
      * @note OVERCOUNTS BECAUSE OF FADING CONTOUR LINES (SOME ISOLATED POINTS ARENT ROOTS)
      */
@@ -170,7 +170,7 @@ int main()
 
     /**
      * @brief creates the minCol/minRow vector for non-symmetric images
-     * 
+     *
      * @return 2D VECTOR and FULL image
      * @note LESS EFICIENT BUT CAN BE USED WITHOUT COMPLEX CONJ. ROOT THRM. (CCRT)
      */
@@ -186,7 +186,7 @@ int main()
 
     /**
      * @brief creates a vect of pixel values (essentially a better topo map)
-     * 
+     *
      * @return 2D VECTOR and FULL image
      * @note NEEDS TO BE TRIMMED AROUND THE EDGES IN PYTHON BECAUSE OF OVER-SATURATION
      */
@@ -210,7 +210,7 @@ int main()
      */
 
     // myFile2.close();
-    
+
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::seconds>(start3-start2);
     auto duration2 = std::chrono::duration_cast<std::chrono::milliseconds>(end-start3);
