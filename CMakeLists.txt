@@ -25,6 +25,8 @@ file(GLOB USER_FILES_1
 "./headers/PolyEval.hpp"
 "./src/HalfPolyEval.cpp"
 "./headers/HalfPolyEval.hpp"
+"./src/QuartPolyEval.cpp"
+"./headers/QuartPolyEval.hpp"
 "./src/FlatHalfPoly.cpp"
 "./headers/FlatHalfPoly.hpp"
 "./src/Polynomial.cpp"
