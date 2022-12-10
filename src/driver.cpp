@@ -30,14 +30,14 @@ int main()
 
         int sideLen = 600; // side length (in pixels) of the resulting image
         int polySize = 24; // degree of the polynomial to be used
-        int numSamples = 15;
-        int startPoly = 120023;
+        int numSamples = 30;
+        int startPoly = 840161;
         int numPolys = 5000; // NEEDS TO BE LARGER THAN NUMSAMPLES !!!!!
         int offset = i; // offsets the coeff's indices. Must be smaller than 24 !!!!
         int coeffSize = (polySize *numPolys); // num coeffs to load for real/img
         bool polyIsArr = false;
 
-        string fileName = "../output/pixEval_" + fileNum + to_string(offset+24) + ".csv";
+        string fileName = "../output/pixEval_" + fileNum + to_string(offset+168) + ".csv";
 
         Tools kit;
         double largeNum = pow(10,300); // upper bound for polyEval vals (above ~ infinity)
