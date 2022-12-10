@@ -27,13 +27,13 @@ int main()
     auto comeca = std::chrono::high_resolution_clock::now();
     for (int i=0; i<23; i++) {
         auto start = std::chrono::high_resolution_clock::now();
-        string fileNum = "1800_10000_";
+        string fileNum = "600_5000_";
 
-        int sideLen = 1800; // side length (in pixels) of the resulting image
+        int sideLen = 600; // side length (in pixels) of the resulting image
         int polySize = 24; // degree of the polynomial to be used
         int numSamples = 30;
         int startPoly = 0;
-        int numPolys = 10000; // NEEDS TO BE LARGER THAN NUMSAMPLES !!!!!
+        int numPolys = 5000; // NEEDS TO BE LARGER THAN NUMSAMPLES !!!!!
         int offset = i; // offsets the coeff's indices. Must be smaller than 24 !!!!
         int coeffSize = (polySize *numPolys); // num coeffs to load for real/img
         bool polyIsArr = false;
