@@ -1,7 +1,8 @@
 #include "../headers/PolyEval.hpp"
 
 
-PolyEval::PolyEval(vector<complex<double>> vectPolyToUse_, Tools kit_, vector<double> realSpaced_, vector<double> imgSpaced_, int polySize_, int imgSize_, int numSamples_, double bigBoy_) {
+PolyEval::PolyEval(vector<complex<double>> vectPolyToUse_, Tools kit_, vector<double> realSpaced_, vector<double> imgSpaced_,
+                                                int polySize_, int imgSize_, int numSamples_, int numOfPoly_, double bigBoy_) {
     vectPolyToUse = vectPolyToUse_;
     kit = kit_;
     realSpaced = realSpaced_;
@@ -9,10 +10,28 @@ PolyEval::PolyEval(vector<complex<double>> vectPolyToUse_, Tools kit_, vector<do
     polySize = polySize_;
     imgSize = imgSize_;
     numSamples = numSamples_;
+    numOfPoly = numOfPoly_;
     bigBoy = bigBoy_;
     realSpan = floor(realSpaced_.size() /numSamples_);
+    polySpan = max(int(floor(numOfPoly /numSamples)), 1);
     
     // creates a 2d vector with (real x img) indices
+
+    for (int f=0; f<imgSize; f++) {
+        vector<vector<float>> interMed00(imgSize, vector<float> (numOfPoly,0.0));
+        multPixValVect.push_back(interMed00);
+    }
+
+    for (int f=0; f<imgSize; f++) {
+        vector<vector<int>> interMed01(imgSize, vector<int> (numOfPoly,0));
+        multBinValVect.push_back(interMed01);
+    }
+
+    for (int h=0; h<imgSize; h++) {
+        vector<int> interMed02(imgSize,0);
+        binCountVect3.push_back(interMed02);
+    }
+
     for (int g=0; g<imgSize; g++) {
         vector<int> interMed0(imgSize,0);
         binCountVect.push_back(interMed0);
@@ -76,6 +95,49 @@ void PolyEval::createMat(int startReal, int endReal) {
             //     pixelValVect[k][m] = abs(kit.horner7(vectPolyToUse, polySize, {realVal,imgVal}));
             // }
             pixelValVect[k][m] = abs(kit.horner7(vectPolyToUse, polySize, {realVal,imgVal}, bigBoy));
+        }
+    }
+}
+
+// creates a matrix of the vals of the polynomial at each pixel for MULTIPLE POLYS
+void PolyEval::createMat2(int startReal, int endReal) {
+    double realVal = 0.0;
+    double imgVal = 0.0;
+    vector<float> tempVect;
+    // double rad = 0.0;
+    for (int k=startReal; k<endReal; k++) {
+        for (int m=0; m<imgSize; m++) {
+            realVal = realSpaced[k];
+            imgVal = imgSpaced[m];
+            tempVect = kit.horner9(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal}, bigBoy);
+            multPixValVect[k][m].swap(tempVect);
+        }
+    }
+}
+
+// finds all local mins for a given poly within the vect of all polys
+// NOTE: does not check edges of the image
+void PolyEval::findAllMins(int startPoly, int endPoly) {
+    float curr;
+    float top;
+    float left;
+    float right;
+    float bott;
+    float tota;
+    for (int k=1; k<(imgSize-1); k++) {
+        for (int m=1; m<(imgSize-1); m++) {
+            for (int n=startPoly; n<endPoly; n++) {
+                curr = multPixValVect[k][m][n];
+                top = multPixValVect[k-1][m][n];
+                left = multPixValVect[k][m-1][n];
+                right = multPixValVect[k][m+1][n];
+                bott = multPixValVect[k+1][m][n];
+                tota = curr+top+left+right+bott;
+                // cout << curr << ' ' << top << ' ' << left << ' ' << right << ' ' << bott << '\n';
+                if ((tota>0) && (curr<=top) && (curr<=left) && (curr<=right) && (curr<=bott)) {
+                    multBinValVect[k][m][n] ++;
+                }
+            }
         }
     }
 }
@@ -330,6 +392,37 @@ void PolyEval::threadSafe_Sample5() {
     }
 }
 
+// safely multithreads to create a matrix of pixel vals for MULTIPLE POLYNOMIALS
+void PolyEval::threadSafe_Sample6() {
+    vector<thread> tasks6;
+    int startReal_ = 0;
+    int endReal_ = 0;
+    for (int j=0; j<numSamples; j++) {
+        startReal_ = endReal_;
+        endReal_ += realSpan;
+        tasks6.push_back(thread(&PolyEval::createMat2, this, startReal_, endReal_));
+    }
+    for (unsigned int f=0; f<tasks6.size(); f++) {
+        tasks6[f].join();
+    }
+}
+
+// safely multithreads to find local mins for MULTIPLE POLYNOMIALS
+void PolyEval::threadSafe_Sample7() {
+    // cout << polySpan << '\n';
+    vector<thread> tasks7;
+    int start_ = 0;
+    int end_ = 0;
+    for (int j=0; j<numSamples; j++) {
+        start_ = end_;
+        end_ += polySpan;
+        tasks7.push_back(thread(&PolyEval::findAllMins, this, start_, end_));
+    }
+    for (unsigned int f=0; f<tasks7.size(); f++) {
+        tasks7[f].join();
+    }
+}
+
 // Used to create a single matrix of min vals
 void PolyEval::combineColRow() {
     for (int p=0; p<imgSize; p++) {
@@ -348,6 +441,17 @@ void PolyEval::combineColRow2() {
     }
 }
 
+// Used to create a single matrix of max vals from MULTIPLE POLYNOMIALS
+void PolyEval::combineColRow3() {
+    for (int p=0; p<imgSize; p++) {
+        for (int f=0; f<imgSize; f++) {
+            for (int z=0; z<numOfPoly; z++) {
+                binCountVect3[p][f] += multBinValVect[p][f][z];
+            }
+        }
+    }
+}
+
 // returns bin count from original method (tolerances, no local mins)
 vector<vector<int>> PolyEval::getBinCount() {
     threadSafe_Sample();
@@ -360,6 +464,14 @@ vector<vector<int>> PolyEval::getBinCount2() {
     threadSafe_Sample3();
     combineColRow();
     return binCountVect2;
+}
+
+// returns bin count from combined col/row local mins w/ MULTIPLE POLYNOMIALS
+vector<vector<int>> PolyEval::getBinCount3() {
+    threadSafe_Sample6();
+    threadSafe_Sample7();
+    combineColRow3();
+    return binCountVect3;
 }
 
 // returns bin count from combined col/row local max

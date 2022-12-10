@@ -11,6 +11,11 @@
 build/*
 !build/.gitkeep
 
+### output folder to be ignored except for .gitkeep
+
+output/*
+!output/.gitkeep
+
 ### C++ files to be ignored
 
 # Prerequisites
