@@ -18,6 +18,10 @@ HalfPolyEval::HalfPolyEval(vector<complex<double>> vectPolyToUse_, Tools kit_, v
 
     // creates a 2d vector with (real x img) indices
 
+    multPixValArr = new float**[twoImgSize];
+    multBinValArr = new int**[twoImgSize];
+    binCountArr3 = new int*[twoImgSize];
+
     for (int f=0; f<twoImgSize; f++) {
         vector<vector<float>> interMed00(imgSize, vector<float> (numOfPoly,0.0));
         multPixValVect.push_back(interMed00);
@@ -112,6 +116,75 @@ void HalfPolyEval::createMat2(int startReal, int endReal) {
             imgVal = imgSpaced[m];
             tempVect = kit.horner9(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal}, bigBoy);
             multPixValVect[k][m].swap(tempVect);
+        }
+    }
+}
+
+// creates a matrix of vals of the polynomial at each pixel for MULTIPLE POLYS AS ARRAY
+void HalfPolyEval::createMat3(int startReal, int endReal) {
+    double realVal = 0.0;
+    double imgVal = 0.0;
+    for (int k=startReal; k<endReal; k++) {
+        multPixValArr[k] = new float*[imgSize];
+        for (int m=0; m<imgSize; m++) {
+            realVal = realSpaced[k];
+            imgVal = imgSpaced[m];
+            multPixValArr[k][m] = new float[numOfPoly];
+            multPixValArr[k][m] = kit.horner8(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal}, bigBoy);
+        }
+    }
+}
+
+// finds all local mins for a given poly within the ARRAY of all polys as ARRAY
+// NOTE: does not check edges of the image THIS LEAVES EDGE INDICES WITHOUT A VALUE
+void HalfPolyEval::findAllMins2(int startPoly, int endPoly) {
+    float curr;
+    float top;
+    float left;
+    float right;
+    float bott;
+    float tota;
+
+    multBinValArr[0] = new int*[imgSize];
+    multBinValArr[twoImgSize -1] = new int*[imgSize];
+    for (int y=0; y<imgSize; y++) {
+        multBinValArr[0][y] = new int[numOfPoly];
+        multBinValArr[twoImgSize -1][y] = new int[numOfPoly];
+        for (int n=startPoly; n<endPoly; n++) {
+            multBinValArr[0][y][n] = 0;
+            multBinValArr[twoImgSize -1][y][n] = 0;
+        }
+    }
+
+    for (int k=1; k<(twoImgSize-1); k++) {
+        multBinValArr[k] = new int*[imgSize]; // second dimension
+        for (int m=1; m<(imgSize); m++) {
+            multBinValArr[k][m] = new int[numOfPoly]; // third dimension, represents individual pixels
+            for (int n=startPoly; n<endPoly; n++) {
+                curr = multPixValArr[k][m][n];
+                top = multPixValArr[k-1][m][n];
+                left = multPixValArr[k][m-1][n];
+                bott = multPixValArr[k+1][m][n];
+                tota = curr+top+left+bott;
+                if (m == (imgSize-1)) {
+                    if ((tota>0) && (curr<=top) && (curr<=left) && (curr<=bott)) {
+                        multBinValArr[k][m][n] = 1;
+                    }
+                    else {
+                        multBinValArr[k][m][n] = 0;
+                    }
+                }
+                else {
+                    right = multPixValArr[k][m+1][n];
+                    tota += right;
+                    if ((tota>0) && (curr<=top) && (curr<=left) && (curr<=right) && (curr<=bott)) {
+                        multBinValArr[k][m][n] = 1;
+                    }
+                    else {
+                        multBinValArr[k][m][n] = 0;
+                    }
+                }
+            }
         }
     }
 }
@@ -409,6 +482,28 @@ void HalfPolyEval::threadSafe_Sample7() {
     }
 }
 
+// safely multithreads to create a matrix of pixel vals for MULTIPLE POLYNOMIALS AS ARRAY
+void HalfPolyEval::threadSafe_Sample8() {
+    cout << "Making matrix..." << endl;
+    vector<thread> tasks8;
+    int startReal_ = 0;
+    int endReal_ = 0;
+    for (int j=0; j<numSamples; j++) {
+        startReal_ = endReal_;
+        endReal_ += realSpan;
+        tasks8.push_back(thread(&HalfPolyEval::createMat3, this, startReal_, endReal_));
+    }
+    for (unsigned int f=0; f<tasks8.size(); f++) {
+        tasks8[f].join();
+    }
+}
+
+// safely multithreads to find local mins for MULTIPLE POLYNOMIALS AS ARRAY
+void HalfPolyEval::threadSafe_Sample9() {
+    cout << "Finding mins..." << endl;
+    findAllMins2(0,numOfPoly);
+}
+
 // Used to create a single matrix of min vals
 void HalfPolyEval::combineColRow() {
     for (int p=0; p<twoImgSize; p++) {
@@ -443,6 +538,32 @@ void HalfPolyEval::combineColRow3() {
     }
 }
 
+// Used to create a single matrix of max vals from MULTIPLE POLYNOMIALS AS ARRAY
+void HalfPolyEval::combineColRow4() {
+    cout << "Combining array..." << endl;
+
+    // pads top and bottom with arr of zeros
+    binCountArr3[0] = new int[imgSize];
+    binCountArr3[twoImgSize -1] = new int[imgSize];
+    for (int y=0; y<imgSize; y++) {
+        binCountArr3[0][y] = 0;
+        binCountArr3[twoImgSize -1][y] = 0;
+    }
+
+    // NOTE: Indices are funky because edges aren't calculated in findAllMins2(...)
+    for (int p=1; p<(twoImgSize-1); p++) {
+        binCountArr3[p] = new int[imgSize];
+        binCountArr3[p][0] = 0; // pads left with zero
+        for (int f=1; f<(imgSize); f++) {
+            binCountArr3[p][f] = multBinValArr[p][f][0];
+            for (int z=1; z<numOfPoly; z++) {
+                binCountArr3[p][f] += multBinValArr[p][f][z];
+            }
+        }
+        // binCountArr3[p][imgSize -1] = 0; // pads right with zero (NOT NEEDED)
+    }
+}
+
 // returns bin count from original method (tolerances, no local mins)
 vector<vector<int>> HalfPolyEval::getBinCount() {
     threadSafe_Sample();
@@ -463,6 +584,14 @@ vector<vector<int>> HalfPolyEval::getBinCount3() {
     threadSafe_Sample7();
     combineColRow3();
     return binCountVect3;
+}
+
+// returns bin count from combined col/row local mins w/ MULTIPLE POLYNOMIALS AS 2D ARRAY
+int** HalfPolyEval::getBinCount4() {
+    threadSafe_Sample8();
+    threadSafe_Sample9();
+    combineColRow4();
+    return binCountArr3;
 }
 
 // returns bin count from combined col/row local max

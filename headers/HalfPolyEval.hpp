@@ -43,6 +43,9 @@ class HalfPolyEval{
 		vector<vector<int>> minPeaksVect;
 		vector<vector<vector<float>>> multPixValVect;
 		vector<vector<vector<int>>> multBinValVect;
+		float ***multPixValArr;
+		int ***multBinValArr;
+		int **binCountArr3;
 		void threadSafe_Sample();
 		void threadSafe_Sample2();
 		void threadSafe_Sample3();
@@ -50,10 +53,14 @@ class HalfPolyEval{
 		void threadSafe_Sample5();
 		void threadSafe_Sample6();
 		void threadSafe_Sample7();
+		void threadSafe_Sample8();
+		void threadSafe_Sample9();
 		void evalPixel(int startReal, int endReal);
 		void createMat(int startReal, int endReal);
 		void createMat2(int startReal, int endReal);
+		void createMat3(int startReal, int endReal);
 		void findAllMins(int startPoly, int endPoly);
+		void findAllMins2(int startReal, int endReal);
 		void findColMin(int startReal, int endReal);
 		void findRowMin(int startImg, int endImg);
 		void findColMax(int startReal, int endReal);
@@ -62,6 +69,7 @@ class HalfPolyEval{
 		void combineColRow();
 		void combineColRow2();
 		void combineColRow3();
+		void combineColRow4();
 	public:
 		HalfPolyEval(vector<complex<double>> vectPolyToUse_, Tools kit_, vector<double> realSpaced_, vector<double> imgSpaced_,
 					int polySize_, int imgSize_, int numSamples_, int numOfPoly_, double bigBoy_);
@@ -70,6 +78,7 @@ class HalfPolyEval{
 		vector<vector<int>> getBinCount();
 		vector<vector<int>> getBinCount2();
 		vector<vector<int>> getBinCount3();
+		int **getBinCount4();
 		vector<vector<int>> getMaxBinCount();
 		vector<vector<double>> getPixelVal();
 		vector<vector<int>> getMinPeaks();

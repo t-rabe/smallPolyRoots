@@ -99,22 +99,17 @@ complex<double> Tools::horner7(vector<complex<double>> poly7, int n7, complex<do
 float* Tools::horner8(vector<complex<double>> poly8, int numPoly8, int n8, complex<double> x8, double bigBoy)
 {
     float *valsAtPix = new float[numPoly8];
-    float result8 = 0.0;
     int index = 0;
     
     for (int k=0; k<numPoly8; k++) {
-        index = k *n8;
         complex<double> tempResult = poly8[index]; // the first value of each sub polynomial
         // Evaluate value of polynomial using Horner's method
-        for (int i=1; i<n8; i++)
-            tempResult = tempResult*x8 + poly8[index +i];
-        result8 = abs(tempResult);
-        if (result8 < bigBoy) {
-            valsAtPix[k] = result8;
+        for (int i=1; i<n8; i++) {
+            index++;
+            tempResult = tempResult*x8 + poly8[index];
         }
-        else {
-            valsAtPix[k] = 0.0;
-        }
+        valsAtPix[k] = abs(tempResult);
+        index++;
     }
     
     return valsAtPix;

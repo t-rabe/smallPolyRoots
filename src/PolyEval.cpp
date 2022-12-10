@@ -14,24 +14,29 @@ PolyEval::PolyEval(vector<complex<double>> vectPolyToUse_, Tools kit_, vector<do
     bigBoy = bigBoy_;
     realSpan = floor(realSpaced_.size() /numSamples_);
     polySpan = max(int(floor(numOfPoly /numSamples)), 1);
+
+    multPixValArr = new float**[imgSize];
+    multBinValArr = new int**[imgSize];
+    binCountArr3 = new int*[imgSize];
     
     // creates a 2d vector with (real x img) indices
 
-    for (int f=0; f<imgSize; f++) {
-        vector<vector<float>> interMed00(imgSize, vector<float> (numOfPoly,0.0));
-        multPixValVect.push_back(interMed00);
-    }
+    // for (int f=0; f<imgSize; f++) {
+    //     vector<vector<float>> interMed00(imgSize, vector<float> (numOfPoly,0.0));
+    //     multPixValVect.push_back(interMed00);
+    // }
 
-    for (int f=0; f<imgSize; f++) {
-        vector<vector<int>> interMed01(imgSize, vector<int> (numOfPoly,0));
-        multBinValVect.push_back(interMed01);
-    }
+    // for (int f=0; f<imgSize; f++) {
+    //     vector<vector<int>> interMed01(imgSize, vector<int> (numOfPoly,0));
+    //     multBinValVect.push_back(interMed01);
+    // }
 
-    for (int h=0; h<imgSize; h++) {
-        vector<int> interMed02(imgSize,0);
-        binCountVect3.push_back(interMed02);
-    }
+    // for (int h=0; h<imgSize; h++) {
+    //     vector<int> interMed02(imgSize,0);
+    //     binCountVect3.push_back(interMed02);
+    // }
 
+    /*
     for (int g=0; g<imgSize; g++) {
         vector<int> interMed0(imgSize,0);
         binCountVect.push_back(interMed0);
@@ -76,9 +81,8 @@ PolyEval::PolyEval(vector<complex<double>> vectPolyToUse_, Tools kit_, vector<do
         vector<int> interMed43(imgSize,0);
         minPeaksVect.push_back(interMed43);
     }
-    // threadSafe_Sample();
-    // threadSafe_Sample2();
-    // threadSafe_Sample3();
+    */
+
 }
 
 // creates a matrix of the vals of the polynomial at each pixel
@@ -115,6 +119,37 @@ void PolyEval::createMat2(int startReal, int endReal) {
     }
 }
 
+// creates a matrix of vals of the polynomial at each pixel for MULTIPLE POLYS AS ARRAY
+void PolyEval::createMat3(int startReal, int endReal) {
+    double realVal = 0.0;
+    double imgVal = 0.0;
+    for (int k=startReal; k<endReal; k++) {
+        multPixValArr[k] = new float*[imgSize];
+        for (int m=0; m<imgSize; m++) {
+            realVal = realSpaced[k];
+            imgVal = imgSpaced[m];
+            multPixValArr[k][m] = new float[numOfPoly];
+            multPixValArr[k][m] = kit.horner8(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal}, bigBoy);
+        }
+    }
+    // delete tempArr;
+    // double realVal = 0.0;
+    // double imgVal = 0.0;
+    // float **tempArr = new float*[imgSize];
+    // // double rad = 0.0;
+    // for (int k=startReal; k<endReal; k++) {
+    //     // float **tempArr = new float*[imgSize];
+    //     for (int m=0; m<imgSize; m++) {
+    //         realVal = realSpaced[k];
+    //         imgVal = imgSpaced[m];
+    //         tempArr[m] = kit.horner8(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal}, bigBoy);
+    //     }
+    //     multPixValArr[k] = tempArr;
+    //     // delete tempArr;
+    // }
+    // // delete tempArr;
+}
+
 // finds all local mins for a given poly within the vect of all polys
 // NOTE: does not check edges of the image
 void PolyEval::findAllMins(int startPoly, int endPoly) {
@@ -140,6 +175,110 @@ void PolyEval::findAllMins(int startPoly, int endPoly) {
             }
         }
     }
+}
+
+// finds all local mins for a given poly within the ARRAY of all polys as ARRAY
+// NOTE: does not check edges of the image THIS LEAVES EDGE INDICES WITHOUT A VALUE
+void PolyEval::findAllMins2(int startPoly, int endPoly) {
+    float curr;
+    float top;
+    float left;
+    float right;
+    float bott;
+    float tota;
+    // int **tempArr2 = new int*[imgSize]; // second dimension
+    // int *tempArr3 = new int[numOfPoly]; // third dimension, represents individual pixels
+
+    multBinValArr[0] = new int*[imgSize];
+    multBinValArr[imgSize -1] = new int*[imgSize];
+    for (int y=0; y<imgSize; y++) {
+        multBinValArr[0][y] = new int[numOfPoly];
+        multBinValArr[imgSize -1][y] = new int[numOfPoly];
+        for (int n=startPoly; n<endPoly; n++) {
+            multBinValArr[0][y][n] = 0;
+            multBinValArr[imgSize -1][y][n] = 0;
+        }
+    }
+
+    for (int k=1; k<(imgSize-1); k++) {
+        multBinValArr[k] = new int*[imgSize]; // second dimension
+        // cout << "check" << endl;
+        for (int m=1; m<(imgSize-1); m++) {
+            multBinValArr[k][m] = new int[numOfPoly]; // third dimension, represents individual pixels
+            // cout << "check2" << endl;
+            for (int n=startPoly; n<endPoly; n++) {
+                // cout << "k = " << k << " m = " << m << " n = " << n << '\n';
+                curr = multPixValArr[k][m][n];
+                top = multPixValArr[k-1][m][n];
+                left = multPixValArr[k][m-1][n];
+                right = multPixValArr[k][m+1][n];
+                bott = multPixValArr[k+1][m][n];
+                tota = curr+top+left+right+bott;
+                // cout << "k = " << k << " m = " << m << " n = " << n << '\n';
+                // cout << curr << ' ' << top << ' ' << left << ' ' << right << ' ' << bott << '\n';
+                // cout << "check3" << endl;
+                if ((tota>0) && (curr<=top) && (curr<=left) && (curr<=right) && (curr<=bott)) {
+                    // cout << "1__";
+                    multBinValArr[k][m][n] = 1;
+                    // cout << "2\n";
+                }
+                else {
+                    // cout << k << "_" << m << "_" << n << "__";
+                    multBinValArr[k][m][n] = 0;
+                    // cout << "2\n";
+                }
+            }
+            // tempArr2[m] = tempArr3;
+            // cout << "k = " << k << " m = " << m << '\n';
+            // delete tempArr3;
+        }
+        // multBinValArr[k] = tempArr2;
+        // cout << "check5\n";
+        // delete tempArr2;
+    }
+    // delete tempArr2;
+    // delete tempArr3;
+    // float curr;
+    // float top;
+    // float left;
+    // float right;
+    // float bott;
+    // float tota;
+    // // int **tempArr2 = new int*[imgSize]; // second dimension
+    // // int *tempArr3 = new int[numOfPoly]; // third dimension, represents individual pixels
+
+    // for (int k=1; k<(imgSize-1); k++) {
+    //     int **tempArr2 = new int*[imgSize]; // second dimension
+    //     // cout << "check" << endl;
+    //     for (int m=1; m<(imgSize-1); m++) {
+    //         int *tempArr3 = new int[numOfPoly]; // third dimension, represents individual pixels
+    //         // cout << "check2" << endl;
+    //         for (int n=startPoly; n<endPoly; n++) {
+    //             curr = multPixValArr[k][m][n];
+    //             top = multPixValArr[k-1][m][n];
+    //             left = multPixValArr[k][m-1][n];
+    //             right = multPixValArr[k][m+1][n];
+    //             bott = multPixValArr[k+1][m][n];
+    //             tota = curr+top+left+right+bott;
+    //             // cout << curr << ' ' << top << ' ' << left << ' ' << right << ' ' << bott << '\n';
+    //             // cout << "check3" << endl;
+    //             if ((tota>0) && (curr<=top) && (curr<=left) && (curr<=right) && (curr<=bott)) {
+    //                 tempArr3[n] = 1;
+    //             }
+    //             else {
+    //                 tempArr3[n] = 0;
+    //             }
+    //         }
+    //         tempArr2[m] = tempArr3;
+    //         // cout << "check4" << endl;
+    //         // delete tempArr3;
+    //     }
+    //     multBinValArr[k] = tempArr2;
+    //     // cout << "check5\n";
+    //     // delete tempArr2;
+    // }
+    // // delete tempArr2;
+    // // delete tempArr3;
 }
 
 // evals individual pixels and updates their bin count. cannot factor out the found roots
@@ -423,6 +562,39 @@ void PolyEval::threadSafe_Sample7() {
     }
 }
 
+// safely multithreads to create a matrix of pixel vals for MULTIPLE POLYNOMIALS AS ARRAY
+void PolyEval::threadSafe_Sample8() {
+    cout << "Making matrix..." << endl;
+    vector<thread> tasks8;
+    int startReal_ = 0;
+    int endReal_ = 0;
+    for (int j=0; j<numSamples; j++) {
+        startReal_ = endReal_;
+        endReal_ += realSpan;
+        tasks8.push_back(thread(&PolyEval::createMat3, this, startReal_, endReal_));
+    }
+    for (unsigned int f=0; f<tasks8.size(); f++) {
+        tasks8[f].join();
+    }
+}
+
+// safely multithreads to find local mins for MULTIPLE POLYNOMIALS AS ARRAY
+void PolyEval::threadSafe_Sample9() {
+    cout << "Finding mins..." << endl;
+    findAllMins2(0,numOfPoly);
+    // vector<thread> tasks9;
+    // int start_ = 0;
+    // int end_ = 0;
+    // for (int j=0; j<1; j++) {
+    //     start_ = end_;
+    //     end_ += numOfPoly;
+    //     tasks9.push_back(thread(&PolyEval::findAllMins2, this, start_, end_));
+    // }
+    // for (unsigned int f=0; f<tasks9.size(); f++) {
+    //     tasks9[f].join();
+    // }
+}
+
 // Used to create a single matrix of min vals
 void PolyEval::combineColRow() {
     for (int p=0; p<imgSize; p++) {
@@ -452,6 +624,68 @@ void PolyEval::combineColRow3() {
     }
 }
 
+// Used to create a single matrix of max vals from MULTIPLE POLYNOMIALS AS ARRAY
+void PolyEval::combineColRow4() {
+    cout << "Combining array..." << endl;
+
+    // pads top and bottom with arr of zeros
+    binCountArr3[0] = new int[imgSize];
+    binCountArr3[imgSize -1] = new int[imgSize];
+    for (int y=0; y<imgSize; y++) {
+        binCountArr3[0][y] = 0;
+        binCountArr3[imgSize -1][y] = 0;
+    }
+
+    // NOTE: Indices are funky because edges aren't calculated in findAllMins2(...)
+    for (int p=1; p<(imgSize-1); p++) {
+        binCountArr3[p] = new int[imgSize];
+        binCountArr3[p][0] = 0; // pads left with zero
+        for (int f=1; f<(imgSize-1); f++) {
+            binCountArr3[p][f] = multBinValArr[p][f][0];
+            for (int z=1; z<numOfPoly; z++) {
+                binCountArr3[p][f] += multBinValArr[p][f][z];
+            }
+        }
+        binCountArr3[p][imgSize -1] = 0; // pads right with zero
+        // binCountArr3[p] = tempArr4;
+        // delete tempArr4;
+    }
+    // delete multBinValArr;
+    // pads top and bottom with arr of zeros
+    // int *tempArr5 = new int[imgSize];
+    // for (int y=0; y<imgSize; y++) {
+    //     tempArr5[y] = 0;
+    // }
+    // binCountArr3[0] = tempArr5;
+    // binCountArr3[imgSize -1] = tempArr5;
+    // delete tempArr5;
+    // cout << "Combining array..." << endl;
+    // // int *tempArr4 = new int[imgSize];
+    // // NOTE: Indices are funky because edges aren't calculated in findAllMins2(...)
+    // for (int p=1; p<(imgSize-1); p++) {
+    //     int *tempArr4 = new int[imgSize];
+    //     tempArr4[0] = 0; // pads left with zero
+    //     for (int f=1; f<(imgSize-1); f++) {
+    //         tempArr4[f] = multBinValArr[p][f][0];
+    //         for (int z=1; z<numOfPoly; z++) {
+    //             tempArr4[f] += multBinValArr[p][f][z];
+    //         }
+    //     }
+    //     tempArr4[imgSize -1] = 0; // pads right with zero
+    //     binCountArr3[p] = tempArr4;
+    //     // delete tempArr4;
+    // }
+
+    // // pads top and bottom with arr of zeros
+    // int *tempArr5 = new int[imgSize];
+    // for (int y=0; y<imgSize; y++) {
+    //     tempArr5[y] = 0;
+    // }
+    // binCountArr3[0] = tempArr5;
+    // binCountArr3[imgSize -1] = tempArr5;
+    // // delete tempArr5;
+}
+
 // returns bin count from original method (tolerances, no local mins)
 vector<vector<int>> PolyEval::getBinCount() {
     threadSafe_Sample();
@@ -472,6 +706,14 @@ vector<vector<int>> PolyEval::getBinCount3() {
     threadSafe_Sample7();
     combineColRow3();
     return binCountVect3;
+}
+
+// returns bin count from combined col/row local mins w/ MULTIPLE POLYNOMIALS AS 2D ARRAY
+int** PolyEval::getBinCount4() {
+    threadSafe_Sample8();
+    threadSafe_Sample9();
+    combineColRow4();
+    return binCountArr3;
 }
 
 // returns bin count from combined col/row local max
