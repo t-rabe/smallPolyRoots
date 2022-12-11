@@ -21,20 +21,20 @@ PolyEval::PolyEval(vector<complex<double>> vectPolyToUse_, Tools kit_, vector<do
     
     // creates a 2d vector with (real x img) indices
 
-    // for (int f=0; f<imgSize; f++) {
-    //     vector<vector<float>> interMed00(imgSize, vector<float> (numOfPoly,0.0));
-    //     multPixValVect.push_back(interMed00);
-    // }
+    for (int f=0; f<imgSize; f++) {
+        vector<vector<float>> interMed00(imgSize, vector<float> (numOfPoly,0.0));
+        multPixValVect.push_back(interMed00);
+    }
 
-    // for (int f=0; f<imgSize; f++) {
-    //     vector<vector<int>> interMed01(imgSize, vector<int> (numOfPoly,0));
-    //     multBinValVect.push_back(interMed01);
-    // }
+    for (int f=0; f<imgSize; f++) {
+        vector<vector<int>> interMed01(imgSize, vector<int> (numOfPoly,0));
+        multBinValVect.push_back(interMed01);
+    }
 
-    // for (int h=0; h<imgSize; h++) {
-    //     vector<int> interMed02(imgSize,0);
-    //     binCountVect3.push_back(interMed02);
-    // }
+    for (int h=0; h<imgSize; h++) {
+        vector<int> interMed02(imgSize,0);
+        binCountVect3.push_back(interMed02);
+    }
 
     /*
     for (int g=0; g<imgSize; g++) {

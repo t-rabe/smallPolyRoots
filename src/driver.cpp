@@ -28,18 +28,18 @@ int main()
     auto comeca = std::chrono::high_resolution_clock::now();
     for (int i=0; i<23; i++) {
         auto start = std::chrono::high_resolution_clock::now();
-        string fileNum = "600_5000_secondZoom";
+        string fileNum = "600_5000_thirdZoom";
 
         int sideLen = 600; // side length (in pixels) of the resulting image
         int polySize = 24; // degree of the polynomial to be used
-        int numSamples = 30;
-        int startPoly = 0;
+        int numSamples = 15;
+        int startPoly = 120000;
         int numPolys = 5000; // NEEDS TO BE LARGER THAN NUMSAMPLES !!!!!
         int offset = i; // offsets the coeff's indices. Must be smaller than 24 !!!!
         int coeffSize = (polySize *numPolys); // num coeffs to load for real/img
         bool polyIsArr = false;
 
-        string fileName = "../output/pixEval_" + fileNum + to_string(offset+0) + ".csv";
+        string fileName = "../output/pixEval_" + fileNum + to_string(offset+23) + ".csv";
 
         Tools kit;
         double largeNum = pow(10,300); // upper bound for polyEval vals (above ~ infinity)
@@ -116,8 +116,8 @@ int main()
         // vector<double> imgSpaced = kit.linspace(-1.6,1.6,sideLen);
         // vector<double> realSpaced = kit.linspace(-1.55,1.55,sideLen);
         // vector<double> imgSpaced = kit.linspace(-1.55,1.55,sideLen);
-        vector<double> realSpaced = kit.linspace(-0.45,-0.35,sideLen);
-        vector<double> imgSpaced = kit.linspace(0.55,0.45,sideLen);
+        vector<double> realSpaced = kit.linspace(0.55,0.65,sideLen);
+        vector<double> imgSpaced = kit.linspace(0.25,0.35,sideLen);
         PolyEval polyeval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,numPolys,largeNum);
         HalfPolyEval halfpolyeval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,numPolys,largeNum);
         QuartPolyEval quartpolyeval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,numPolys,largeNum);
@@ -125,7 +125,7 @@ int main()
         ofstream myFile;
         myFile.open(fileName);
         auto start2 = std::chrono::high_resolution_clock::now();
-
+        
         /**
          * @brief creates the minCol/minRow vector
          *
