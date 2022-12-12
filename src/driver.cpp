@@ -13,6 +13,7 @@
 #include "../headers/HalfPolyEval.hpp"
 #include "../headers/QuartPolyEval.hpp"
 #include "../headers/FlatHalfPoly.hpp"
+#include "../headers/AxesEval.hpp"
 
 using namespace std;
 
@@ -28,18 +29,18 @@ int main()
     auto comeca = std::chrono::high_resolution_clock::now();
     for (int i=0; i<23; i++) {
         auto start = std::chrono::high_resolution_clock::now();
-        string fileNum = "600_5000_thirdZoom";
+        string fileNum = "2400_500_axes";
 
-        int sideLen = 600; // side length (in pixels) of the resulting image
+        int sideLen = 2400; // side length (in pixels) of the resulting image
         int polySize = 24; // degree of the polynomial to be used
         int numSamples = 15;
-        int startPoly = 120000;
-        int numPolys = 5000; // NEEDS TO BE LARGER THAN NUMSAMPLES !!!!!
+        int startPoly = 0;
+        int numPolys = 500; // NEEDS TO BE LARGER THAN NUMSAMPLES !!!!!
         int offset = i; // offsets the coeff's indices. Must be smaller than 24 !!!!
         int coeffSize = (polySize *numPolys); // num coeffs to load for real/img
         bool polyIsArr = false;
 
-        string fileName = "../output/pixEval_" + fileNum + to_string(offset+23) + ".csv";
+        string fileName = "../output/pixEval_" + fileNum + to_string(offset+0) + ".csv";
 
         Tools kit;
         double largeNum = pow(10,300); // upper bound for polyEval vals (above ~ infinity)
@@ -112,16 +113,18 @@ int main()
 
         std::cout << "Done here. Number of Samples: " << numSamples << "\nFile number: " << offset << endl;
 
-        // vector<double> realSpaced = kit.linspace(-1.6,1.6,sideLen);
-        // vector<double> imgSpaced = kit.linspace(-1.6,1.6,sideLen);
+        vector<double> realSpaced = kit.linspace(-1.6,1.6,sideLen);
+        vector<double> imgSpaced = kit.linspace(-1.6,1.6,sideLen);
         // vector<double> realSpaced = kit.linspace(-1.55,1.55,sideLen);
         // vector<double> imgSpaced = kit.linspace(-1.55,1.55,sideLen);
-        vector<double> realSpaced = kit.linspace(0.55,0.65,sideLen);
-        vector<double> imgSpaced = kit.linspace(0.25,0.35,sideLen);
-        PolyEval polyeval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,numPolys,largeNum);
-        HalfPolyEval halfpolyeval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,numPolys,largeNum);
-        QuartPolyEval quartpolyeval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,numPolys,largeNum);
-        FlatHalfPoly flathalfpoly(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,largeNum);
+        // vector<double> realSpaced = kit.linspace(0.55,0.65,sideLen);
+        // vector<double> imgSpaced = kit.linspace(0.25,0.35,sideLen);
+        
+        // PolyEval polyeval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,numPolys,largeNum);
+        // HalfPolyEval halfpolyeval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,numPolys,largeNum);
+        // QuartPolyEval quartpolyeval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,numPolys,largeNum);
+        // FlatHalfPoly flathalfpoly(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,largeNum);
+        AxesEval axeseval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,numPolys,largeNum);
         ofstream myFile;
         myFile.open(fileName);
         auto start2 = std::chrono::high_resolution_clock::now();
@@ -193,25 +196,41 @@ int main()
         //    for (int h=1; h<(sideLen/2); h++) {
         //        myFile << ',' << quartBinVect[g][h];
         //    }
-        //    for (int i=((sideLen/2)-1); i>=0; i--) {
+        //    for (int i=((sideLen/2)-2); i>=0; i--) {
         //        myFile << ',' << quartBinVect[g][i];
         //    }
         //    myFile << "\n";
         // }
-        // for (int g=((sideLen/2)-1); g>=0; g--) {
+        // for (int g=((sideLen/2)-2); g>=0; g--) {
         //    myFile << quartBinVect[g][0];
         //    for (int h=1; h<(sideLen/2); h++) {
         //        myFile << ',' << quartBinVect[g][h];
         //    }
-        //    for (int i=((sideLen/2)-1); i>=0; i--) {
+        //    for (int i=((sideLen/2)-2); i>=0; i--) {
         //        myFile << ',' << quartBinVect[g][i];
         //    }
         //    myFile << "\n";
         // }
-        // myFile << '0';
-        // for (int k=0; k<(sideLen -1); k++) {
-        //     myFile << ",0";
-        // }
+
+        /**
+         * @brief creates the local min vector
+         *
+         * @return 2D VECTOR and ONLY AXES of the image
+         * @note USED WITH THE FUNCTION ABOVE 
+         *       AND CAN ONLY BE USED WITH COMPLEX CONJ. ROOT THRM. (CCRT)
+         * 
+         * @note MUST BE USED WITH LARGE SAMPLES BC INDIVIDUAL POLYS ARE NOT SYMMETRIC
+         *       OVER THE IMAGINARY AXIS !!!!!!!!!!!!!!
+         */
+        vector<vector<int>> axesBinVect = axeseval.getBinCount();
+        auto start3 = std::chrono::high_resolution_clock::now();
+        for (int g=0; g<(sideLen-1); g++) {
+           myFile << axesBinVect[g][0];
+           for (int h=1; h<(sideLen-1); h++) {
+               myFile << ',' << axesBinVect[g][h];
+           }
+           myFile << "\n";
+        }
 
         /**
          * @brief creates a vector of min peaks (the isolated points and values of 2)
@@ -236,15 +255,15 @@ int main()
          * @return 2D VECTOR and FULL image
          * @note LESS EFICIENT BUT CAN BE USED WITHOUT COMPLEX CONJ. ROOT THRM. (CCRT)
          */
-        vector<vector<int>> binCountVect = polyeval.getBinCount3();
-        auto start3 = std::chrono::high_resolution_clock::now();
-        for (int g=0; g<sideLen; g++) {
-            myFile << binCountVect[g][0];
-            for (int h=1; h<sideLen; h++) {
-                myFile << ',' << binCountVect[g][h];
-            }
-            myFile << '\n';
-        }
+        // vector<vector<int>> binCountVect = polyeval.getBinCount3();
+        // auto start3 = std::chrono::high_resolution_clock::now();
+        // for (int g=0; g<sideLen; g++) {
+        //     myFile << binCountVect[g][0];
+        //     for (int h=1; h<sideLen; h++) {
+        //         myFile << ',' << binCountVect[g][h];
+        //     }
+        //     myFile << '\n';
+        // }
 
         /**
          * @brief creates the minCol/minRow vector for non-symmetric images

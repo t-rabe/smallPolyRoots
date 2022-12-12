@@ -18,9 +18,9 @@ QuartPolyEval::QuartPolyEval(vector<complex<double>> vectPolyToUse_, Tools kit_,
 
     // creates a 2d vector with (real x img) indices
 
-    multPixValArr = new float**[twoImgSize];
-    multBinValArr = new int**[twoImgSize];
-    binCountArr3 = new int*[twoImgSize];
+    // multPixValArr = new float**[twoImgSize];
+    // multBinValArr = new int**[twoImgSize];
+    // binCountArr3 = new int*[twoImgSize];
 
     for (int f=0; f<imgSize; f++) {
         vector<vector<float>> interMed00(imgSize, vector<float> (numOfPoly,0.0));
@@ -37,50 +37,50 @@ QuartPolyEval::QuartPolyEval(vector<complex<double>> vectPolyToUse_, Tools kit_,
         binCountVect3.push_back(interMed02);
     }
 
-    for (int g=0; g<twoImgSize; g++) {
-        vector<int> interMed0(imgSize,0);
-        binCountVect.push_back(interMed0);
-    }
+    // for (int g=0; g<twoImgSize; g++) {
+    //     vector<int> interMed0(imgSize,0);
+    //     binCountVect.push_back(interMed0);
+    // }
 
-    for (int h=0; h<twoImgSize; h++) {
-        vector<int> interMed1(imgSize,0);
-        binCountVect2.push_back(interMed1);
-    }
+    // for (int h=0; h<twoImgSize; h++) {
+    //     vector<int> interMed1(imgSize,0);
+    //     binCountVect2.push_back(interMed1);
+    // }
 
-    for (int h2=0; h2<twoImgSize; h2++) {
-        vector<int> interMed12(imgSize,0);
-        maxBinCountVect.push_back(interMed12);
-    }
+    // for (int h2=0; h2<twoImgSize; h2++) {
+    //     vector<int> interMed12(imgSize,0);
+    //     maxBinCountVect.push_back(interMed12);
+    // }
 
-    for (int i=0; i<twoImgSize; i++) {
-        vector<double> interMed2(imgSize,0.0);
-        pixelValVect.push_back(interMed2);
-    }
+    // for (int i=0; i<twoImgSize; i++) {
+    //     vector<double> interMed2(imgSize,0.0);
+    //     pixelValVect.push_back(interMed2);
+    // }
 
-    for (int j=0; j<twoImgSize; j++) {
-        vector<int> interMed3(imgSize,0);
-        colMinVect.push_back(interMed3);
-    }
+    // for (int j=0; j<twoImgSize; j++) {
+    //     vector<int> interMed3(imgSize,0);
+    //     colMinVect.push_back(interMed3);
+    // }
 
-    for (int k=0; k<twoImgSize; k++) {
-        vector<int> interMed4(imgSize,0);
-        rowMinVect.push_back(interMed4);
-    }
+    // for (int k=0; k<twoImgSize; k++) {
+    //     vector<int> interMed4(imgSize,0);
+    //     rowMinVect.push_back(interMed4);
+    // }
 
-    for (int j2=0; j2<twoImgSize; j2++) {
-        vector<int> interMed32(imgSize,0);
-        colMaxVect.push_back(interMed32);
-    }
+    // for (int j2=0; j2<twoImgSize; j2++) {
+    //     vector<int> interMed32(imgSize,0);
+    //     colMaxVect.push_back(interMed32);
+    // }
 
-    for (int k2=0; k2<twoImgSize; k2++) {
-        vector<int> interMed42(imgSize,0);
-        rowMaxVect.push_back(interMed42);
-    }
+    // for (int k2=0; k2<twoImgSize; k2++) {
+    //     vector<int> interMed42(imgSize,0);
+    //     rowMaxVect.push_back(interMed42);
+    // }
 
-    for (int k3=0; k3<twoImgSize; k3++) {
-        vector<int> interMed43(imgSize,0);
-        minPeaksVect.push_back(interMed43);
-    }
+    // for (int k3=0; k3<twoImgSize; k3++) {
+    //     vector<int> interMed43(imgSize,0);
+    //     minPeaksVect.push_back(interMed43);
+    // }
     // threadSafe_Sample();
     // threadSafe_Sample2();
     // threadSafe_Sample3();

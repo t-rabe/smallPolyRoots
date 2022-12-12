@@ -35,6 +35,8 @@ file(GLOB USER_FILES_1
 "./headers/RandCoeffs.hpp"
 "./src/tools.cpp"
 "./headers/tools.hpp"
+"./src/AxesEval.cpp"
+"./headers/AxesEval.hpp"
 )
 
 # file(GLOB USER_FILES_2
