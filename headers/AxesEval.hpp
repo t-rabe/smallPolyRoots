@@ -24,12 +24,13 @@ class AxesEval{
 		int polySpan;
 		int polySize;
 		int numOfPoly;
+        double stepSize;
 		double bigBoy;
         Tools kit;
         vector<complex<double>> vectPolyToUse;
         vector<double> realSpaced;
         vector<double> imgSpaced;
-        vector<vector<int>> totBinCountVect;
+        vector<vector<unsigned short int>> totBinCountVect;
 		vector<vector<vector<float>>> imgPixValVect;
 		vector<vector<vector<float>>> realPixValVect;
 		vector<vector<int>> imgMultiBinCountVect;
@@ -48,7 +49,7 @@ class AxesEval{
 					int polySize_, int imgSize_, int numSamples_, int numOfPoly_, double bigBoy_);
 		AxesEval() = default; // pass in default constructor
 		~AxesEval() = default;
-		vector<vector<int>> getBinCount();
+		vector<vector<unsigned short int>> getBinCount();
 };
 
 #endif

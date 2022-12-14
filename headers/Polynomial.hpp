@@ -23,15 +23,12 @@ class Polynomial{
         int arrSize;
         vector<double> realComp; // the real component of each element of the polynomial
         vector<double> imgComp; // the imaginary component
-        complex<double>* aPoly;
         vector<complex<double>> vPoly;
 	public:
-		Polynomial(vector<double> realPart, vector<double> imgPart, int size, complex<double>* blankPoly, bool isArr);
+		Polynomial(vector<double> realPart, vector<double> imgPart, int size, bool isArr);
 		Polynomial() = default; // pass in default constructor
 		~Polynomial() = default;
-        void arrPoly();
         void vectPoly();
-		complex<double>* getArrPoly();
         vector<complex<double>> getVectPoly();
 };
 

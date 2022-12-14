@@ -1,22 +1,9 @@
 #include "../headers/Polynomial.hpp"
 
-Polynomial::Polynomial(vector<double> realPart, vector<double> imgPart, int size, complex<double>* blankPoly, bool isArr) {
+Polynomial::Polynomial(vector<double> realPart, vector<double> imgPart, int size, bool isArr) {
     realComp = realPart;
     imgComp = imgPart;
-    aPoly = blankPoly;
     arrSize = size;
-    if (isArr) {
-        arrPoly();
-    }
-    else {
-        vectPoly();
-    }
-}
-
-void Polynomial::arrPoly() {
-    for (int i=0; i<arrSize; i++) {
-        aPoly[i] = {realComp[i],imgComp[i]};
-    }
 }
 
 void Polynomial::vectPoly() {
@@ -25,10 +12,7 @@ void Polynomial::vectPoly() {
     }
 }
 
-complex<double>* Polynomial::getArrPoly() {
-    return aPoly;
-}
-
 vector<complex<double>> Polynomial::getVectPoly() {
+    vectPoly();
     return vPoly;
 }

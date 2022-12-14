@@ -23,19 +23,32 @@ QuartPolyEval::QuartPolyEval(vector<complex<double>> vectPolyToUse_, Tools kit_,
     // binCountArr3 = new int*[twoImgSize];
 
     for (int f=0; f<imgSize; f++) {
-        vector<vector<float>> interMed00(imgSize, vector<float> (numOfPoly,0.0));
-        multPixValVect.push_back(interMed00);
+        // vector<vector<float>> interMed00(imgSize);
+        // multPixValVect.push_back(interMed00);
+        multPixValVect.push_back(vector<vector<float>> (imgSize));
     }
 
     for (int f=0; f<imgSize; f++) {
-        vector<vector<int>> interMed01(imgSize, vector<int> (numOfPoly,0));
-        multBinValVect.push_back(interMed01);
+        // vector<vector<unsigned short int>> interMed01(imgSize, vector<unsigned short int> (numOfPoly,0));
+        // multBinValVect.push_back(interMed01);
+        multBinValVect.push_back(vector<vector<unsigned short int>> (imgSize, vector<unsigned short int> (numOfPoly,0)));
     }
 
     for (int h=0; h<imgSize; h++) {
-        vector<int> interMed02(imgSize,0);
-        binCountVect3.push_back(interMed02);
+        // vector<unsigned short int> interMed02(imgSize,0);
+        // binCountVect3.push_back(interMed02);
+        binCountVect3.push_back(vector<unsigned short int> (imgSize,0));
     }
+
+    // for (int f=0; f<imgSize; f++) {
+    //     vector<vector<int>> interMed01(imgSize, vector<int> (numOfPoly,0));
+    //     multBinValVect.push_back(interMed01);
+    // }
+
+    // for (int h=0; h<imgSize; h++) {
+    //     vector<int> interMed02(imgSize,0);
+    //     binCountVect3.push_back(interMed02);
+    // }
 
     // for (int g=0; g<twoImgSize; g++) {
     //     vector<int> interMed0(imgSize,0);
@@ -114,8 +127,8 @@ void QuartPolyEval::createMat2(int startReal, int endReal) {
         for (int m=0; m<imgSize; m++) {
             realVal = realSpaced[k];
             imgVal = imgSpaced[m];
-            tempVect = kit.horner9(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal}, bigBoy);
-            multPixValVect[k][m].swap(tempVect);
+            // tempVect = kit.horner9(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal}, bigBoy);
+            multPixValVect[k][m] = kit.horner9(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal}, bigBoy);
         }
     }
 }
@@ -615,7 +628,7 @@ vector<vector<int>> QuartPolyEval::getBinCount2() {
 }
 
 // returns bin count from combined col/row local mins w/ MULTIPLE POLYNOMIALS
-vector<vector<int>> QuartPolyEval::getBinCount3() {
+vector<vector<unsigned short int>> QuartPolyEval::getBinCount3() {
     threadSafe_Sample6();
     threadSafe_Sample7();
     combineColRow3();

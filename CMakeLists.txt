@@ -39,19 +39,25 @@ file(GLOB USER_FILES_1
 "./headers/AxesEval.hpp"
 )
 
-# file(GLOB USER_FILES_2
-# "./src/driver2.cpp"
-# "./src/Functions.cpp"
-# "./headers/Functions.hpp"
-# "./src/RandChoice.cpp"
-# "./headers/RandChoice.hpp"
-# "./src/ApplyFuncs.cpp"
-# "./headers/ApplyFuncs.hpp"
-# "./src/MakeMatrix2.cpp"
-# "./headers/MakeMatrix2.hpp"
-# "./src/Pixel.cpp"
-# "./headers/Pixel.hpp"
-# )
+file(GLOB USER_FILES_2
+"./src/driver2.cpp"
+"./src/PolyEval.cpp"
+"./headers/PolyEval.hpp"
+"./src/HalfPolyEval.cpp"
+"./headers/HalfPolyEval.hpp"
+"./src/QuartPolyEval.cpp"
+"./headers/QuartPolyEval.hpp"
+"./src/FlatHalfPoly.cpp"
+"./headers/FlatHalfPoly.hpp"
+"./src/Polynomial.cpp"
+"./headers/Polynomial.hpp"
+"./src/RandCoeffs.cpp"
+"./headers/RandCoeffs.hpp"
+"./src/tools.cpp"
+"./headers/tools.hpp"
+"./src/AxesEval.cpp"
+"./headers/AxesEval.hpp"
+)
 
 # Download and unpack googletest at configure time
 # configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
@@ -81,9 +87,9 @@ file(GLOB USER_FILES_1
 add_executable( run_driver ${USER_FILES_1} )
 target_link_libraries( run_driver)
 
-# create an executable for driver 
-# add_executable( run_driver2 ${USER_FILES_2} )
-# target_link_libraries( run_driver2)
+# create an executable for driver2 
+add_executable( second_run_driver ${USER_FILES_2} )
+target_link_libraries( second_run_driver)
 
 # create an executable for DFGF_S1 tests 
 # add_executable( run_DFGF_S1_tests ${TEST_FILES_DFGF_S1} ${USER_FILES_2} )

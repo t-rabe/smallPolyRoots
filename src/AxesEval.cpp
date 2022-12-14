@@ -7,28 +7,29 @@ AxesEval::AxesEval(vector<complex<double>> vectPolyToUse_, Tools kit_, vector<do
     kit = kit_;
     realSpaced = realSpaced_;
     imgSpaced = imgSpaced_;
+    stepSize = realSpaced[10] - realSpaced[9];
     polySize = polySize_;
     imgSize = imgSize_ -1;
     halfImgSize = (imgSize_ /2) -1;
     numSamples = numSamples_;
     numOfPoly = numOfPoly_;
     bigBoy = bigBoy_;
-    realSpan = floor(imgSize /numSamples_);
+    realSpan = floor(imgSize_ /numSamples_);
     polySpan = max(int(floor(numOfPoly /numSamples)), 1);
 
     // creates a 2d vector with (real x img) indices
 
     for (int h=0; h<imgSize; h++) {
-        vector<int> interMed0(imgSize,0);
+        vector<unsigned short int> interMed0(imgSize,0);
         totBinCountVect.push_back(interMed0);
     }
 
     for (int i=0; i<3; i++) {
-        vector<vector<float>> interMed1(imgSize, vector<float>(numOfPoly, 0.0));
+        vector<vector<float>> interMed1((imgSize+1), vector<float>(numOfPoly, 0.0));
         imgPixValVect.push_back(interMed1);
     }
     
-    for (int j=0; j<imgSize; j++) {
+    for (int j=0; j<(imgSize+1); j++) {
         vector<vector<float>> interMed2(3, vector<float>(numOfPoly, 0.0));
         realPixValVect.push_back(interMed2);
     }
@@ -51,7 +52,7 @@ void AxesEval::imgEvalPixel(int startImg, int endImg) {
 
     for (int k=startImg; k<endImg; k++) {
         for (int m=0; m<3; m++) {
-            realVal = realSpaced[m+halfImgSize+1];
+            realVal = (m-1) *stepSize;
             imgVal = imgSpaced[k];
             // potentially use .swap here? look at QuartPolyEval.createMat2()
             imgPixValVect[m][k] = kit.horner9(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal}, bigBoy);
@@ -67,7 +68,7 @@ void AxesEval::realEvalPixel(int startReal, int endReal) {
     for (int k=startReal; k<endReal; k++) {
         for (int m=0; m<3; m++) {
             realVal = realSpaced[k];
-            imgVal = imgSpaced[m+halfImgSize+1];
+            imgVal = (m-1) *stepSize;
             
             // potentially use .swap here? look at QuartPolyEval.createMat2()
             realPixValVect[k][m] = kit.horner9(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal}, bigBoy);
@@ -203,6 +204,9 @@ void AxesEval::combineAxes() {
             binCount += realMultiBinCountVect[y][j];
         }
         totBinCountVect[halfImgSize][y] = binCount;
+        // if (binCount > 0) {
+        //     cout << "bin count nonzero\n";
+        // }
     }
     // writes the bottom half of img axis
     for (int z=0; z<halfImgSize; z++) {
@@ -216,7 +220,7 @@ void AxesEval::combineAxes() {
 }
 
 // returns bin count from original method (tolerances, no local mins)
-vector<vector<int>> AxesEval::getBinCount() {
+vector<vector<unsigned short >> AxesEval::getBinCount() {
     threadSafe_Sample();
     threadSafe_Sample2();
     threadSafe_Sample3();
