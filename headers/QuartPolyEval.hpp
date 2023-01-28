@@ -1,3 +1,12 @@
+// #if PARALLEL
+// #include <execution>
+// #define SEQ std::execution::seq,
+// #define PAR std::execution::par,
+// #else
+// #define SEQ
+// #define PAR
+// #endif
+
 #ifndef QUARTPOLYEVAL_H
 #define QUARTPOLYEVAL_H
 #define _USE_MATH_DEFINES
@@ -10,6 +19,7 @@
 #include <thread>
 #include <numeric>
 #include <complex>
+// #include <utility>
 
 #include "./tools.hpp"
 

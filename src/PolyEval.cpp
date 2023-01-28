@@ -32,7 +32,7 @@ PolyEval::PolyEval(vector<complex<double>> vectPolyToUse_, Tools kit_, vector<do
     }
 
     for (int h=0; h<imgSize; h++) {
-        vector<int> interMed02(imgSize,0);
+        vector<unsigned short int> interMed02(imgSize,0);
         binCountVect3.push_back(interMed02);
     }
 
@@ -701,7 +701,7 @@ vector<vector<int>> PolyEval::getBinCount2() {
 }
 
 // returns bin count from combined col/row local mins w/ MULTIPLE POLYNOMIALS
-vector<vector<int>> PolyEval::getBinCount3() {
+vector<vector<unsigned short int>> PolyEval::getBinCount3() {
     threadSafe_Sample6();
     threadSafe_Sample7();
     combineColRow3();

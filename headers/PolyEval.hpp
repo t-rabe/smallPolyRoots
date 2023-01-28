@@ -32,7 +32,7 @@ class PolyEval{
         vector<double> imgSpaced;
         vector<vector<int>> binCountVect; // a large vect of rand ordered indices split into shorter vects
         vector<vector<int>> binCountVect2;
-		vector<vector<int>> binCountVect3;
+		vector<vector<unsigned short int>> binCountVect3;
 		vector<vector<int>> maxBinCountVect;
 		vector<vector<double>> pixelValVect; // a vect of vects to store absolute val of poly evaluated at each pixel
 		vector<vector<int>> colMinVect;
@@ -76,7 +76,7 @@ class PolyEval{
 		~PolyEval() = default;
 		vector<vector<int>> getBinCount();
 		vector<vector<int>> getBinCount2();
-		vector<vector<int>> getBinCount3();
+		vector<vector<unsigned short int>> getBinCount3();
 		int **getBinCount4();
 		vector<vector<int>> getMaxBinCount();
 		vector<vector<double>> getPixelVal();

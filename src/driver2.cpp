@@ -29,17 +29,19 @@ int main(int argc, char *argv[])
     auto comeca0 = std::chrono::high_resolution_clock::now();
     string batchNum = argv[1];
     int bNumber = stoi(batchNum);
-    int numBatches = 10;
+    int numBatches = 1;
 
-    int sideLen = 2400; // side length (in pixels) of the resulting image
-    int polySize = 24; // degree of the polynomial to be used
-    int numSamples = 30;
-    int numPolys = 500; // NEEDS TO BE LARGER THAN NUMSAMPLES !!!!!
+    int sideLen = 1014; // side length (in pixels) of the resulting image
+    int polySize = 13; // degree of the polynomial to be used
+    int numSamples = 13; // how many threads to use
+    int numPolys = 2000; // NEEDS TO BE LARGER THAN NUMSAMPLES !!!!!
     int coeffSize = (polySize *numPolys); // num coeffs to load for real/img
     bool polyIsArr = false;
-    string fileNum = "2399_500_pixels";
+    string fileNum = "1014_2000_matrix";
 
     Tools kit;
+    vector<double> realSpaced = kit.linspace(-6.0,6.0,sideLen);
+    vector<double> imgSpaced = kit.linspace(-6.0,6.0,sideLen);
     double largeNum = pow(10,300); // upper bound for polyEval vals (above ~ infinity)
 
     cout << "Starting # " << batchNum << " with " << numSamples << " samples...\n";
@@ -47,11 +49,13 @@ int main(int argc, char *argv[])
     for (int r=(bNumber*numBatches); r<(bNumber*numBatches) +numBatches; r++) {
         auto comeca = std::chrono::high_resolution_clock::now();
 
-        int startPoly = r *numPolys *polySize;
+        int startPoly = 0;
+        // int startPoly = r *numPolys *polySize; //uncomment for polynomials instead of matrices
         string fileName = "../output/deg24_" + fileNum + to_string(r) + ".csv";
-        vector<vector<unsigned short int>> quartBinVectTot ((sideLen/2), vector<unsigned short int> ((sideLen/2),0));
+        // vector<vector<unsigned short int>> quartBinVectTot ((sideLen/2), vector<unsigned short int> ((sideLen/2),0));
+        vector<vector<unsigned short int>> wholeBinVectTot (sideLen, vector<unsigned short int> (sideLen,0));
 
-        for (int i=0; i<24; i++) {
+        for (int i=0; i<1; i++) {
             // auto start = std::chrono::high_resolution_clock::now();
 
             int offset = i; // offsets the coeff's indices. Must be smaller than 24 !!!!
@@ -95,18 +99,46 @@ int main(int argc, char *argv[])
              * THIS IS THE ALTERNATIVE TO THE ABOVE
              * IT JUST READS PREVIOUSLY SAVED COEFFS FROM A FILE CALLED "testCoeffs.csv"
             */
+            // vector<double> realP; // real part of each coeff
+            // vector<double> imgP; // complex part of each coeff
+            // ifstream coeffFile;
+            // coeffFile.open("../src/testCoeffsOnesBigRandom.csv"); // file holding old coeffs
+            // string coeff;
+            // double coeffDoub;
+            // int lineNum = 0;
+            // if (coeffFile.is_open()) {
+            //     while (coeffFile) {
+            //         getline(coeffFile,coeff);
+            //         coeffDoub = stod(coeff);
+            //         if ((lineNum>(offset+startPoly)) && (lineNum < (coeffSize+offset+startPoly))) {
+            //             realP.push_back(coeffDoub);
+            //             imgP.push_back(0.0); // uncomment to keep real coeffs
+            //         }
+            //         // else if (lineNum < (coeffSize*2)) {
+            //         //     // imgP.push_back(coeffDoub); // uncomment to add complex coeffs
+            //         //     imgP.push_back(0.0); // uncomment to keep real coeffs
+            //         // }
+            //         lineNum ++;
+            //     }
+            // }
+
+            /**
+             * THIS IS ANOTHER ALTERNATIVE TO THE ABOVE
+             * IT READS PREVIOUSLY SAVED COEFFS FROM !!!RANDOM MATRICES/CHARACTERISTIC POLYNOMIALS!!!
+            */
             vector<double> realP; // real part of each coeff
             vector<double> imgP; // complex part of each coeff
             ifstream coeffFile;
-            coeffFile.open("../src/testCoeffsOnesBigRandom.csv"); // file holding old coeffs
+            coeffFile.open("../src/charPolyCoeffsBig.csv"); // file holding old coeffs
             string coeff;
             double coeffDoub;
             int lineNum = 0;
+            
             if (coeffFile.is_open()) {
                 while (coeffFile) {
                     getline(coeffFile,coeff);
                     coeffDoub = stod(coeff);
-                    if ((lineNum>(offset+startPoly)) && (lineNum < (coeffSize+offset+startPoly))) {
+                    if ((lineNum>=(offset+startPoly)) && (lineNum < (coeffSize+offset+startPoly))) {
                         realP.push_back(coeffDoub);
                         imgP.push_back(0.0); // uncomment to keep real coeffs
                     }
@@ -122,16 +154,16 @@ int main(int argc, char *argv[])
 
             // std::cout << "Done here. Number of Samples: " << numSamples << "\nFile number: " << offset << endl;
 
-            vector<double> realSpaced = kit.linspace(-1.6,1.6,sideLen);
-            vector<double> imgSpaced = kit.linspace(-1.6,1.6,sideLen);
+            // vector<double> realSpaced = kit.linspace(-1.6,1.6,sideLen);
+            // vector<double> imgSpaced = kit.linspace(-1.6,1.6,sideLen);
             // vector<double> realSpaced = kit.linspace(-1.55,1.55,sideLen);
             // vector<double> imgSpaced = kit.linspace(-1.55,1.55,sideLen);
             // vector<double> realSpaced = kit.linspace(0.55,0.65,sideLen);
             // vector<double> imgSpaced = kit.linspace(0.25,0.35,sideLen);
             
-            // PolyEval polyeval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,numPolys,largeNum);
+            PolyEval polyeval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,numPolys,largeNum);
             // HalfPolyEval halfpolyeval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,numPolys,largeNum);
-            QuartPolyEval quartpolyeval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,numPolys,largeNum);
+            // QuartPolyEval quartpolyeval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,numPolys,largeNum);
             // FlatHalfPoly flathalfpoly(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,largeNum);
             // AxesEval axeseval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,numPolys,largeNum);
             
@@ -197,13 +229,13 @@ int main(int argc, char *argv[])
              * @note MUST BE USED WITH LARGE SAMPLES BC INDIVIDUAL POLYS ARE NOT SYMMETRIC
              *       OVER THE IMAGINARY AXIS !!!!!!!!!!!!!!
              */
-            vector<vector<unsigned short int>> quartBinVectTemp = quartpolyeval.getBinCount3();
-            // auto start3 = std::chrono::high_resolution_clock::now();
-            for (int g=0; g<(sideLen/2); g++) {
-               for (int h=0; h<(sideLen/2); h++) {
-                   quartBinVectTot[g][h] += quartBinVectTemp[g][h];
-               }
-            }
+            // vector<vector<unsigned short int>> quartBinVectTemp = quartpolyeval.getBinCount3();
+            // // auto start3 = std::chrono::high_resolution_clock::now();
+            // for (int g=0; g<(sideLen/2); g++) {
+            //    for (int h=0; h<(sideLen/2); h++) {
+            //        quartBinVectTot[g][h] += quartBinVectTemp[g][h];
+            //    }
+            // }
             
             /**
              * @brief creates the local min vector
@@ -248,15 +280,18 @@ int main(int argc, char *argv[])
              * @return 2D VECTOR and FULL image
              * @note LESS EFICIENT BUT CAN BE USED WITHOUT COMPLEX CONJ. ROOT THRM. (CCRT)
              */
-            // vector<vector<int>> binCountVect = polyeval.getBinCount3();
+            ofstream myFile;
+            myFile.open(fileName);
+            vector<vector<unsigned short int>> wholeBinVect = polyeval.getBinCount3();
             // auto start3 = std::chrono::high_resolution_clock::now();
-            // for (int g=0; g<sideLen; g++) {
-            //     myFile << binCountVect[g][0];
-            //     for (int h=1; h<sideLen; h++) {
-            //         myFile << ',' << binCountVect[g][h];
-            //     }
-            //     myFile << '\n';
-            // }
+            for (int g=0; g<sideLen; g++) {
+                myFile << wholeBinVect[g][0];
+                for (int h=1; h<sideLen; h++) {
+                    myFile << ',' << wholeBinVect[g][h];
+                }
+                myFile << '\n';
+            }
+            myFile.close();
 
             /**
              * @brief creates the minCol/minRow vector for non-symmetric images
@@ -299,31 +334,36 @@ int main(int argc, char *argv[])
 
             // std::cout << "Sample #" << offset << " runtime: " << duration3.count() << "s\n";
         }
-        ofstream myFile;
-        myFile.open(fileName);
 
-        for (int g=0; g<(sideLen/2); g++) {
-           myFile << quartBinVectTot[g][0];
-           for (int h=1; h<(sideLen/2); h++) {
-               myFile << ',' << quartBinVectTot[g][h];
-           }
-           for (int i=((sideLen/2)-2); i>=0; i--) {
-               myFile << ',' << quartBinVectTot[g][i];
-           }
-           myFile << "\n";
-        }
-        for (int g=((sideLen/2)-2); g>=0; g--) {
-           myFile << quartBinVectTot[g][0];
-           for (int h=1; h<(sideLen/2); h++) {
-               myFile << ',' << quartBinVectTot[g][h];
-           }
-           for (int i=((sideLen/2)-2); i>=0; i--) {
-               myFile << ',' << quartBinVectTot[g][i];
-           }
-           myFile << "\n";
-        }
+        /**
+         * UNCOMMENT THE FILE WRITING SECTION BELOW TO UTILIZE QUARTPOLYEVAL
+         * 
+         */
+        // ofstream myFile;
+        // myFile.open(fileName);
 
-        myFile.close();
+        // for (int g=0; g<(sideLen/2); g++) {
+        //    myFile << quartBinVectTot[g][0];
+        //    for (int h=1; h<(sideLen/2); h++) {
+        //        myFile << ',' << quartBinVectTot[g][h];
+        //    }
+        //    for (int i=((sideLen/2)-2); i>=0; i--) {
+        //        myFile << ',' << quartBinVectTot[g][i];
+        //    }
+        //    myFile << "\n";
+        // }
+        // for (int g=((sideLen/2)-2); g>=0; g--) {
+        //    myFile << quartBinVectTot[g][0];
+        //    for (int h=1; h<(sideLen/2); h++) {
+        //        myFile << ',' << quartBinVectTot[g][h];
+        //    }
+        //    for (int i=((sideLen/2)-2); i>=0; i--) {
+        //        myFile << ',' << quartBinVectTot[g][i];
+        //    }
+        //    myFile << "\n";
+        // }
+
+        // myFile.close();
 
         auto fim = std::chrono::high_resolution_clock::now();
         auto duration4 = std::chrono::duration_cast<std::chrono::minutes>(fim-comeca);

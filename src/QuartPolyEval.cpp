@@ -574,15 +574,14 @@ void QuartPolyEval::combineColRow2() {
 // Used to create a single matrix of max vals from MULTIPLE POLYNOMIALS
 void QuartPolyEval::combineColRow3() {
     for (int p=0; p<imgSize; p++) {
-        // cout << p << '\n';
-        // cout << multBinValVect[p][1][0] << '\n';
         for (int f=0; f<imgSize; f++) {
+            // UNCOMMENT AND CHANGE INCLUDES TO COLLAPSE A DIMENSION OF THE MAT TO ONE VAL
+            // binCountVect3[p][f] = std::reduce(PAR multBinValVect[p][f].cbegin(), multBinValVect[p][f].cend());
+            
+            // ALTERNATIVE TO THE ABOVE, USES c++14 AND RUNS ON HPC
             for (int z=0; z<numOfPoly; z++) {
-                // cout << multBinValVect[p][f][z];
                 binCountVect3[p][f] += multBinValVect[p][f][z];
-                // cout << z << '\n';
             }
-            // cout << '\n';
         }
     }
 }
