@@ -126,6 +126,7 @@ vector<float> Tools::horner9(vector<complex<double>> poly9, int numPoly9, int n9
     for (int k=0; k<numPoly9; k++) {
         // index2 = k *n9;
         tempResult2 = poly9[index2]; // the first value of each sub polynomial
+        // cout << tempResult2.real() << " " << tempResult2.imag() << endl;
         // Evaluate value of polynomial using Horner's method
         for (int i=1; i<n9; i++) {
             index2++;

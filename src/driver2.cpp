@@ -31,17 +31,17 @@ int main(int argc, char *argv[])
     int bNumber = stoi(batchNum);
     int numBatches = 1;
 
-    int sideLen = 1014; // side length (in pixels) of the resulting image
+    int sideLen = 507; // side length (in pixels) of the resulting image
     int polySize = 13; // degree of the polynomial to be used
     int numSamples = 13; // how many threads to use
-    int numPolys = 2000; // NEEDS TO BE LARGER THAN NUMSAMPLES !!!!!
+    int numPolys = 8000; // NEEDS TO BE LARGER THAN NUMSAMPLES !!!!!
     int coeffSize = (polySize *numPolys); // num coeffs to load for real/img
     bool polyIsArr = false;
-    string fileNum = "1014_2000_matrix";
+    string fileNum = "507_8000_matrix_zoom4";
 
     Tools kit;
-    vector<double> realSpaced = kit.linspace(-6.0,6.0,sideLen);
-    vector<double> imgSpaced = kit.linspace(-6.0,6.0,sideLen);
+    vector<double> realSpaced = kit.linspace(-1.945,-1.905,sideLen);
+    vector<double> imgSpaced = kit.linspace(-0.02,0.02,sideLen);
     double largeNum = pow(10,300); // upper bound for polyEval vals (above ~ infinity)
 
     cout << "Starting # " << batchNum << " with " << numSamples << " samples...\n";
@@ -51,14 +51,14 @@ int main(int argc, char *argv[])
 
         int startPoly = 0;
         // int startPoly = r *numPolys *polySize; //uncomment for polynomials instead of matrices
-        string fileName = "../output/deg24_" + fileNum + to_string(r) + ".csv";
+        // string fileName = "../output/deg24_" + fileNum + to_string(r) + ".csv";
         // vector<vector<unsigned short int>> quartBinVectTot ((sideLen/2), vector<unsigned short int> ((sideLen/2),0));
         vector<vector<unsigned short int>> wholeBinVectTot (sideLen, vector<unsigned short int> (sideLen,0));
 
-        for (int i=0; i<1; i++) {
+        for (int i=0; i<10; i++) {
             // auto start = std::chrono::high_resolution_clock::now();
-
-            int offset = i; // offsets the coeff's indices. Must be smaller than 24 !!!!
+            string fileName = "../output/mat12x12_" + fileNum + "_" + to_string(i) + ".csv";
+            int offset = i *coeffSize; // offsets the coeff's indices. Must be smaller than 24 !!!!
             
             vector<complex<double>> vectPolyToUse;
 
