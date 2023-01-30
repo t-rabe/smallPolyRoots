@@ -37,27 +37,55 @@ int main(int argc, char *argv[])
     int numPolys = 8000; // NEEDS TO BE LARGER THAN NUMSAMPLES !!!!!
     int coeffSize = (polySize *numPolys); // num coeffs to load for real/img
     bool polyIsArr = false;
-    string fileNum = "507_8000_matrix_zoom4";
+    string fileNum = "507_8000_matrix_zoom";
 
     Tools kit;
-    vector<double> realSpaced = kit.linspace(-1.945,-1.905,sideLen);
-    vector<double> imgSpaced = kit.linspace(-0.02,0.02,sideLen);
+
+    vector<double> realSpaced;
+    vector<double> imgSpaced;
     double largeNum = pow(10,300); // upper bound for polyEval vals (above ~ infinity)
 
     cout << "Starting # " << batchNum << " with " << numSamples << " samples...\n";
+    auto comeca = std::chrono::high_resolution_clock::now();
+    auto fim = std::chrono::high_resolution_clock::now();
+    auto duration4 = std::chrono::duration_cast<std::chrono::minutes>(fim-comeca);
 
-    for (int r=(bNumber*numBatches); r<(bNumber*numBatches) +numBatches; r++) {
-        auto comeca = std::chrono::high_resolution_clock::now();
+    for (int r=0; r<12; r++) {
+        comeca = std::chrono::high_resolution_clock::now();
 
         int startPoly = 0;
+
+        realSpaced.clear();
+        imgSpaced.clear();
+        if (r%4==0) {
+            realSpaced = kit.linspace(1.905,1.945,sideLen);
+        }
+        else if (r%4==1) {
+            realSpaced = kit.linspace(1.945,1.985,sideLen);
+        }
+        else if (r%4==2) {
+            realSpaced = kit.linspace(1.985,2.025,sideLen);
+        }
+        else if (r%4==3) {
+            realSpaced = kit.linspace(2.025,2.065,sideLen);
+        }
+
+        if (r<4) {
+            imgSpaced = kit.linspace(0.02,0.06,sideLen);
+        }
+        else if (r<8) {
+            imgSpaced = kit.linspace(-0.02,0.02,sideLen);
+        }
+        else if (r<12) {
+            imgSpaced = kit.linspace(-0.06,-0.02,sideLen);
+        }
         // int startPoly = r *numPolys *polySize; //uncomment for polynomials instead of matrices
         // string fileName = "../output/deg24_" + fileNum + to_string(r) + ".csv";
         // vector<vector<unsigned short int>> quartBinVectTot ((sideLen/2), vector<unsigned short int> ((sideLen/2),0));
-        vector<vector<unsigned short int>> wholeBinVectTot (sideLen, vector<unsigned short int> (sideLen,0));
 
         for (int i=0; i<10; i++) {
             // auto start = std::chrono::high_resolution_clock::now();
-            string fileName = "../output/mat12x12_" + fileNum + "_" + to_string(i) + ".csv";
+            string fileName = "../output/mat12x12_" + fileNum + to_string(r+14) + "_" + to_string(i) + ".csv";
             int offset = i *coeffSize; // offsets the coeff's indices. Must be smaller than 24 !!!!
             
             vector<complex<double>> vectPolyToUse;
@@ -365,10 +393,10 @@ int main(int argc, char *argv[])
 
         // myFile.close();
 
-        auto fim = std::chrono::high_resolution_clock::now();
-        auto duration4 = std::chrono::duration_cast<std::chrono::minutes>(fim-comeca);
+        fim = std::chrono::high_resolution_clock::now();
+        duration4 = std::chrono::duration_cast<std::chrono::minutes>(fim-comeca);
         std::cout << "FILE " << r << " RUNTIME: " << duration4.count() << " mins\n";
-    }
+    }   
     auto fim0 = std::chrono::high_resolution_clock::now();
     auto duration5 = std::chrono::duration_cast<std::chrono::minutes>(fim0-comeca0);
     std::cout << "BATCH " << batchNum << "  ---  RUNTIME: " << duration5.count() << " mins\n";
