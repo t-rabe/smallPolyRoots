@@ -79,6 +79,10 @@ file(GLOB USER_FILES_3
 "./headers/AxesEval.hpp"
 )
 
+file(GLOB USER_FILES_4
+"./src/getMatElems.cpp"
+)
+
 # Download and unpack googletest at configure time
 # configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
 # execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
@@ -114,6 +118,10 @@ target_link_libraries( second_run_driver)
 # create an executable for driver3 
 add_executable( third_run_driver ${USER_FILES_3} )
 target_link_libraries( third_run_driver)
+
+# create an executable for getMatElems
+add_executable( get_mat_driver ${USER_FILES_4} )
+target_link_libraries( get_mat_driver)
 
 # create an executable for DFGF_S1 tests 
 # add_executable( run_DFGF_S1_tests ${TEST_FILES_DFGF_S1} ${USER_FILES_2} )

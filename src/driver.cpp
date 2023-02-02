@@ -81,12 +81,12 @@ int main()
 
         /**
          * THIS IS THE ALTERNATIVE TO THE ABOVE
-         * IT JUST READS PREVIOUSLY SAVED COEFFS FROM A FILE CALLED "testCoeffs.csv"
+         * IT JUST READS PREVIOUSLY SAVED COEFFS FROM A FILE
         */
         vector<double> realP; // real part of each coeff
         vector<double> imgP; // complex part of each coeff
         ifstream coeffFile;
-        coeffFile.open("../src/testCoeffsOnesBigRandom.csv"); // file holding old coeffs
+        coeffFile.open("../src/testCoeffsOnesBigRandom2.csv"); // file holding old coeffs
         string coeff;
         double coeffDoub;
         int lineNum = 0;

@@ -34,8 +34,8 @@ int main(int argc, char *argv[])
 
     int sideLen = 507; // side length (in pixels) of the resulting image
     int polySize = 13; // degree of the polynomial to be used
-    int numSamples = 13; // how many threads to use
-    int numPolys = 2000; // NEEDS TO BE LARGER THAN NUMSAMPLES !!!!!
+    int numSamples = 1; // how many threads to use
+    int numPolys = 1; // NEEDS TO BE LARGER THAN NUMSAMPLES !!!!!
     int coeffSize = (polySize *numPolys); // num coeffs to load for real/img
     bool polyIsArr = false;
     string fileNum = "507_8000_matrix_zoomOut";
@@ -77,12 +77,12 @@ int main(int argc, char *argv[])
                 cout << "FILE " << r << " HAS NO ROOTS\n";
                 continue;
             }
-            else if ((q==6&&r==4) || (q==6&&r==9)){
-                string fileName = "../output/mat12x12_" + fileNum + to_string(r+(15*q)) + "_Tot" + ".csv";
-                kit.writeBlankFile(fileName, sideLen);
-                cout << "FILE " << r << " HAS NO ROOTS\n";
-                continue;
-            }
+            // else if ((q==6&&r==4) || (q==6&&r==9)){
+            //     string fileName = "../output/mat12x12_" + fileNum + to_string(r+(15*q)) + "_Tot" + ".csv";
+            //     kit.writeBlankFile(fileName, sideLen);
+            //     cout << "FILE " << r << " HAS NO ROOTS\n";
+            //     continue;
+            // }
     
             comeca = std::chrono::high_resolution_clock::now();
 
@@ -118,12 +118,12 @@ int main(int argc, char *argv[])
             // string fileName = "../output/deg24_" + fileNum + to_string(r) + ".csv";
             // vector<vector<unsigned short int>> quartBinVectTot ((sideLen/2), vector<unsigned short int> ((sideLen/2),0));
 
-            for (int p=0; p<4; p++) {
+            for (int p=0; p<1; p++) {
                 int i = 4;
                 // auto start = std::chrono::high_resolution_clock::now();
                 string fileName = "../output/mat12x12_" + fileNum + to_string(r+(15*q)) + "_" + to_string(i+12)
-                                + "_test0_" + to_string(p) + ".csv";
-                int offset = i *coeffSize *4; // offsets the coeff's indices. Must be smaller than 24 !!!!
+                                + "_test6_" + to_string(p) + ".csv";
+                int offset = 497445; // offsets the coeff's indices. Must be smaller than 24 !!!!
                 int offset2 = coeffSize;
                 vector<complex<double>> vectPolyToUse;
 
@@ -201,12 +201,13 @@ int main(int argc, char *argv[])
                 double coeffDoub;
                 int lineNum = 0;
                 int lineNum2 = 0;
-                
+
                 if (coeffFile.is_open()) {
                     while (coeffFile) {
                         getline(coeffFile,coeff);
                         coeffDoub = stod(coeff);
                         if ((lineNum>=(offset+(offset2*p))) && (lineNum < (offset+(offset2*(p+1))))) {
+                            // cout << coeffDoub << " ";
                             realP.push_back(coeffDoub);
                             imgP.push_back(0.0); // uncomment to keep real coeffs
                             lineNum2 ++;
@@ -217,6 +218,7 @@ int main(int argc, char *argv[])
                         // }
                         lineNum ++;
                     }
+                    // realP = {1,0,-24,4,208,-80,-512,512,128,0,0,0,6144}; // these are the coeffs for the matrix messing things up
                 }
                 Polynomial polynomial(realP, imgP, coeffSize, polyIsArr);
                 vectPolyToUse = polynomial.getVectPoly();
