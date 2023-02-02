@@ -42,6 +42,7 @@ int main(int argc, char *argv[])
     int coeffSize = (polySize *numPolys); // num coeffs to load for real/img
     bool polyIsArr = false;
     string fileNum = "507_8000_matrix_zoomOut";
+    // string fileNum = "507_8000_matrix_noZoom";
 
     Tools kit;
 
@@ -59,15 +60,16 @@ int main(int argc, char *argv[])
     auto fimBatch = std::chrono::high_resolution_clock::now();
     auto durationBatch = std::chrono::duration_cast<std::chrono::minutes>(fimBatch-comecaBatch);
     
-    for (int q=0; q<6; q++) { // each row of batches in the image. Change back to q=0, q<6
+    for (int q=0; q<1; q++) { // each row of batches in the image. Change back to q=0, q<6
         comecaBatch = std::chrono::high_resolution_clock::now();
         imgSpaced.clear();
         imgSpaced = kit.linspace((-0.4+(0.8*q)),(-0.4+(0.8*(q+1))),sideLen);
+        // imgSpaced = kit.linspace(-6.0,6.0,sideLen);
         cout << "Starting row # " << q << " at T = " << 
             std::chrono::duration_cast<std::chrono::minutes>(comecaBatch-comeca0).count()
              << " mins...\n";
         
-        for (int r=0; r<15; r++) { // change back to r=0, r<15
+        for (int r=3; r<5; r++) { // change back to r=0, r<15
             if ((((r-7)*(r-7))+(q*q)) >= 50) {
                 string fileName = "../output/mat12x12_" + fileNum + to_string(r+(15*q)) + "_Tot" + ".csv";
                 kit.writeBlankFile(fileName, sideLen);
@@ -93,6 +95,7 @@ int main(int argc, char *argv[])
 
             realSpaced.clear();
             realSpaced = kit.linspace((-6.0 +(0.8*r)),(-6.0 +(0.8*(r+1))),sideLen);
+            // realSpaced = kit.linspace(-6.0,6.0,sideLen);
 
             // if (r%4==0) {
             //     realSpaced = kit.linspace(1.905,1.945,sideLen);
@@ -123,7 +126,7 @@ int main(int argc, char *argv[])
 
             for (int i=0; i<12; i++) {
                 // auto start = std::chrono::high_resolution_clock::now();
-                string fileName = "../output/mat12x12_" + fileNum + to_string(r+(15*q)) + "_" + to_string(i+12) + ".csv";
+                string fileName = "../output/mat12x12_" + fileNum + to_string(r+(15*q)) + "_" + to_string(i+36) + ".csv";
                 int offset = i *coeffSize; // offsets the coeff's indices. Must be smaller than 24 !!!!
                 
                 vector<complex<double>> vectPolyToUse;
@@ -195,7 +198,7 @@ int main(int argc, char *argv[])
                 vector<double> realP; // real part of each coeff
                 vector<double> imgP; // complex part of each coeff
                 ifstream coeffFile;
-                coeffFile.open("../src/charPolyCoeffsBig2.csv"); // file holding old coeffs
+                coeffFile.open("../src/charPolyCoeffsBig4.csv"); // file holding old coeffs
                 string coeff;
                 double coeffDoub;
                 int lineNum = 0;
