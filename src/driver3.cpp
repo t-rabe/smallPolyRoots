@@ -118,10 +118,10 @@ int main(int argc, char *argv[])
             // string fileName = "../output/deg24_" + fileNum + to_string(r) + ".csv";
             // vector<vector<unsigned short int>> quartBinVectTot ((sideLen/2), vector<unsigned short int> ((sideLen/2),0));
 
-            for (int p=2; p<4; p++) {
-                int i = 12;
+            for (int p=0; p<4; p++) {
+                int i = 4;
                 // auto start = std::chrono::high_resolution_clock::now();
-                string fileName = "../output/mat12x12_" + fileNum + to_string(r+(15*q)) + "_" + to_string(i)
+                string fileName = "../output/mat12x12_" + fileNum + to_string(r+(15*q)) + "_" + to_string(i+12)
                                 + "_test0_" + to_string(p) + ".csv";
                 int offset = i *coeffSize *4; // offsets the coeff's indices. Must be smaller than 24 !!!!
                 int offset2 = coeffSize;
@@ -196,7 +196,7 @@ int main(int argc, char *argv[])
                 realP.clear();
                 imgP.clear();
                 ifstream coeffFile;
-                coeffFile.open("../src/charPolyCoeffsBig.csv"); // file holding old coeffs
+                coeffFile.open("../src/charPolyCoeffsBig2.csv"); // file holding old coeffs
                 string coeff;
                 double coeffDoub;
                 int lineNum = 0;
@@ -217,15 +217,9 @@ int main(int argc, char *argv[])
                         // }
                         lineNum ++;
                     }
-                    cout << lineNum2 << endl;
-                    cout << imgP[13] << endl;
-                    cout << offset << "  ----  " << offset2 << endl;
                 }
-                cout << "check\n";
                 Polynomial polynomial(realP, imgP, coeffSize, polyIsArr);
-                cout << "check0\n";
                 vectPolyToUse = polynomial.getVectPoly();
-                cout << "check1\n";
                 // std::cout << "Done here. Number of Samples: " << numSamples << "\nFile number: " << offset << endl;
 
                 // vector<double> realSpaced = kit.linspace(-1.6,1.6,sideLen);
@@ -240,7 +234,6 @@ int main(int argc, char *argv[])
                 // QuartPolyEval quartpolyeval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,numPolys,largeNum);
                 // FlatHalfPoly flathalfpoly(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,largeNum);
                 // AxesEval axeseval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,numPolys,largeNum);
-                cout << "check2\n";
                 // auto start2 = std::chrono::high_resolution_clock::now();
                 
                 /**
@@ -357,7 +350,6 @@ int main(int argc, char *argv[])
                 ofstream myFile;
                 myFile.open(fileName);
                 vector<vector<unsigned short int>> wholeBinVect = polyeval.getBinCount3();
-                cout << "check3\n";
                 // auto start3 = std::chrono::high_resolution_clock::now();
                 for (int g=0; g<sideLen; g++) {
                     myFile << wholeBinVect[g][0];
