@@ -170,3 +170,16 @@ vector<double> Tools::linspace(double start_in, double end_in, int num_in) {
 	
 	return linspaced;
 }
+
+void Tools::writeBlankFile(string whichFile, int sideLen) {
+    ofstream myFile;
+    myFile.open(whichFile);
+    for (int g=0; g<sideLen; g++) {
+        myFile << "0";
+        for (int h=1; h<sideLen; h++) {
+            myFile << ",0";
+        }
+        myFile << '\n';
+    }
+    myFile.close();
+}

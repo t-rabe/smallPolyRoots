@@ -8,6 +8,7 @@
 #include <random>
 #include <cmath>
 #include <thread>
+#include <fstream>
 #include <numeric>
 #include <complex>
 
@@ -25,6 +26,7 @@ class Tools{
         float* horner8(vector<complex<double>> poly8, int numPoly8, int n8, complex<double> x8, double bigBoy);
         vector<float> horner9(vector<complex<double>> poly9, int numPoly9, int n9, complex<double> x9, double bigBoy);
         vector<double> linspace(double start_in, double end_in, int num_in);
+        void writeBlankFile(string whichFile_, int sideLen_);
 };
 
 #endif

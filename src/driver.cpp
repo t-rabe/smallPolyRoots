@@ -69,16 +69,15 @@ int main()
          * THIS CREATES NEW COEFFS AND WRITES THEM TO A FILE TO BE REUSED
          * EXCLUSIVELY 1 OR -1, ONE MILLION OF THEM
         */
-        // RandCoeffs onescoeffs(1000000,1,1);
+        // RandCoeffs onescoeffs(17000000,1,1);
         // vector<double> realP = onescoeffs.getTotSampleOnes();
         // ofstream coeffFile0;
-        // coeffFile0.open("../src/testCoeffsOnes.csv");
+        // coeffFile0.open("../src/testCoeffsOnesBigRandom4.csv");
         // for (int m=0; m<realP.size() -1; m++) {
         //     coeffFile0 << realP[m] << '\n';
         // }
         // coeffFile0 << realP[realP.size() -1];
         // coeffFile0.close();
-
 
         /**
          * THIS IS THE ALTERNATIVE TO THE ABOVE
@@ -308,6 +307,6 @@ int main()
     auto fim = std::chrono::high_resolution_clock::now();
     auto duration4 = std::chrono::duration_cast<std::chrono::minutes>(fim-comeca);
     std::cout << "FINAL RUNTIME: " << duration4.count() << " mins\n";
-
+    
     return 0;
 }

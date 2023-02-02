@@ -59,6 +59,26 @@ file(GLOB USER_FILES_2
 "./headers/AxesEval.hpp"
 )
 
+file(GLOB USER_FILES_3
+"./src/driver3.cpp"
+"./src/PolyEval.cpp"
+"./headers/PolyEval.hpp"
+"./src/HalfPolyEval.cpp"
+"./headers/HalfPolyEval.hpp"
+"./src/QuartPolyEval.cpp"
+"./headers/QuartPolyEval.hpp"
+"./src/FlatHalfPoly.cpp"
+"./headers/FlatHalfPoly.hpp"
+"./src/Polynomial.cpp"
+"./headers/Polynomial.hpp"
+"./src/RandCoeffs.cpp"
+"./headers/RandCoeffs.hpp"
+"./src/tools.cpp"
+"./headers/tools.hpp"
+"./src/AxesEval.cpp"
+"./headers/AxesEval.hpp"
+)
+
 # Download and unpack googletest at configure time
 # configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
 # execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
@@ -90,6 +110,10 @@ target_link_libraries( run_driver)
 # create an executable for driver2 
 add_executable( second_run_driver ${USER_FILES_2} )
 target_link_libraries( second_run_driver)
+
+# create an executable for driver3 
+add_executable( third_run_driver ${USER_FILES_3} )
+target_link_libraries( third_run_driver)
 
 # create an executable for DFGF_S1 tests 
 # add_executable( run_DFGF_S1_tests ${TEST_FILES_DFGF_S1} ${USER_FILES_2} )
