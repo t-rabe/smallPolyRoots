@@ -16,7 +16,17 @@ build/*
 output/*
 !output/.gitkeep
 
-### C++ files to be ignored
+### coeff files to be ignored
+
+coeffFiles/*
+!coeffFiles/.gitkeep
+
+### image files to be ignored
+
+images/*
+share_images/*
+!share_images/.gitkeep
+!images/.gitkeep
 
 # Prerequisites
 *.d
