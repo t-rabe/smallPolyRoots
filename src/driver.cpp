@@ -18,8 +18,9 @@
 using namespace std;
 
 /**
- * @brief MAKE TOLERANCE SMALL, then factor out the found roots and repeat the process
- * adding to the data with each iteration so that it is more contoured
+ * @brief This driver is deprecated EXCEPT for the coeff generation function. Used 
+ * primarily to create new coeff files populated from the set {-1,1}.
+ * 
  *
  * @return int
  */
@@ -28,24 +29,24 @@ int main()
 {
     auto comeca = std::chrono::high_resolution_clock::now();
     for (int i=200; i<400; i++) {
-        auto start = std::chrono::high_resolution_clock::now();
-        string fileNum = "2400_500_axes";
+        // auto start = std::chrono::high_resolution_clock::now();
+        // string fileNum = "2400_500_axes";
 
-        int sideLen = 2400; // side length (in pixels) of the resulting image
-        int polySize = 24; // degree of the polynomial to be used
-        int numSamples = 15;
-        int startPoly = 0;
-        int numPolys = 500; // NEEDS TO BE LARGER THAN NUMSAMPLES !!!!!
-        int offset = i; // offsets the coeff's indices. Must be smaller than 24 !!!!
-        int coeffSize = (polySize *numPolys); // num coeffs to load for real/img
-        bool polyIsArr = false;
+        // int sideLen = 2400; // side length (in pixels) of the resulting image
+        // int polySize = 24; // degree of the polynomial to be used
+        // int numSamples = 15;
+        // int startPoly = 0;
+        // int numPolys = 500; // NEEDS TO BE LARGER THAN NUMSAMPLES !!!!!
+        // int offset = i; // offsets the coeff's indices. Must be smaller than 24 !!!!
+        // int coeffSize = (polySize *numPolys); // num coeffs to load for real/img
+        // bool polyIsArr = false;
 
-        string fileName = "../output/pixEval_" + fileNum + to_string(offset+0) + ".csv";
+        // string fileName = "../output/pixEval_" + fileNum + to_string(offset+0) + ".csv";
 
-        Tools kit;
-        double largeNum = pow(10,300); // upper bound for polyEval vals (above ~ infinity)
+        // Tools kit;
+        // double largeNum = pow(10,300); // upper bound for polyEval vals (above ~ infinity)
 
-        vector<complex<double>> vectPolyToUse;
+        // vector<complex<double>> vectPolyToUse;
 
         /**
          * THIS CREATES NEW COEFFS AND WRITES THEM TO A FILE TO BE REUSED
@@ -73,7 +74,7 @@ int main()
         vector<double> realP = onescoeffs.getTotSampleOnes();
         ofstream coeffFile0;
         coeffFile0.open("../coeffFiles/testCoeffsOnesBigRandom" + to_string(i) + ".csv");
-        for (int m=0; m<realP.size() -1; m++) {
+        for (long unsigned int m=0; m<realP.size() -1; m++) {
             coeffFile0 << realP[m] << '\n';
         }
         coeffFile0 << realP[realP.size() -1];

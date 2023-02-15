@@ -5,6 +5,7 @@
 #include <vector>
 #include <thread>
 #include <fstream>
+#include <sstream>
 #include <ctime>
 
 #include "../headers/tools.hpp"

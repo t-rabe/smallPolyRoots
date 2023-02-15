@@ -55,7 +55,7 @@ void AxesEval::imgEvalPixel(int startImg, int endImg) {
             realVal = (m-1) *stepSize;
             imgVal = imgSpaced[k];
             // potentially use .swap here? look at QuartPolyEval.createMat2()
-            imgPixValVect[m][k] = kit.horner9(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal}, bigBoy);
+            imgPixValVect[m][k] = kit.horner9(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal});
         }
     }
 }
@@ -71,7 +71,7 @@ void AxesEval::realEvalPixel(int startReal, int endReal) {
             imgVal = (m-1) *stepSize;
             
             // potentially use .swap here? look at QuartPolyEval.createMat2()
-            realPixValVect[k][m] = kit.horner9(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal}, bigBoy);
+            realPixValVect[k][m] = kit.horner9(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal});
         }
     }
 }

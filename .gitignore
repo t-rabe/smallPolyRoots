@@ -20,6 +20,7 @@ output/*
 
 coeffFiles/*
 !coeffFiles/.gitkeep
+!coeffFiles/charPolyCoeffs2D_Big1.csv
 
 ### image files to be ignored
 

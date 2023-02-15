@@ -128,7 +128,7 @@ void QuartPolyEval::createMat2(int startReal, int endReal) {
             realVal = realSpaced[k];
             imgVal = imgSpaced[m];
             // tempVect = kit.horner9(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal}, bigBoy);
-            multPixValVect[k][m] = kit.horner9(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal}, bigBoy);
+            multPixValVect[k][m] = kit.horner9(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal});
         }
     }
 }
@@ -143,7 +143,7 @@ void QuartPolyEval::createMat3(int startReal, int endReal) {
             realVal = realSpaced[k];
             imgVal = imgSpaced[m];
             multPixValArr[k][m] = new float[numOfPoly];
-            multPixValArr[k][m] = kit.horner8(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal}, bigBoy);
+            multPixValArr[k][m] = kit.horner8(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal});
         }
     }
 }

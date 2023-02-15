@@ -114,7 +114,7 @@ void HalfPolyEval::createMat2(int startReal, int endReal) {
         for (int m=0; m<imgSize; m++) {
             realVal = realSpaced[k];
             imgVal = imgSpaced[m];
-            tempVect = kit.horner9(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal}, bigBoy);
+            tempVect = kit.horner9(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal});
             multPixValVect[k][m].swap(tempVect);
         }
     }
@@ -130,7 +130,7 @@ void HalfPolyEval::createMat3(int startReal, int endReal) {
             realVal = realSpaced[k];
             imgVal = imgSpaced[m];
             multPixValArr[k][m] = new float[numOfPoly];
-            multPixValArr[k][m] = kit.horner8(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal}, bigBoy);
+            multPixValArr[k][m] = kit.horner8(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal});
         }
     }
 }

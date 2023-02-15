@@ -96,7 +96,7 @@ complex<double> Tools::horner7(vector<complex<double>> poly7, int n7, complex<do
 
 // used to evaluate multiple polynomials at a time and return an array of all results
 // at a given pixel. Splits poly8 into numPoly sections of length n8.
-float* Tools::horner8(vector<complex<double>> poly8, int numPoly8, int n8, complex<double> x8, double bigBoy)
+float* Tools::horner8(vector<complex<double>> poly8, int numPoly8, int n8, complex<double> x8)
 {
     float *valsAtPix = new float[numPoly8];
     int index = 0;
@@ -116,7 +116,7 @@ float* Tools::horner8(vector<complex<double>> poly8, int numPoly8, int n8, compl
 }
 
 // same as above except RETURNS A VECTOR
-vector<float> Tools::horner9(vector<complex<double>> poly9, int numPoly9, int n9, complex<double> x9, double bigBoy)
+vector<float> Tools::horner9(vector<complex<double>> poly9, int numPoly9, int n9, complex<double> x9)
 {
     vector<float> valsAtPix2;
     complex<double> tempResult2;
@@ -135,13 +135,6 @@ vector<float> Tools::horner9(vector<complex<double>> poly9, int numPoly9, int n9
         }
         index2++;
         valsAtPix2.push_back(abs(tempResult2));
-        // result9 = abs(tempResult2);
-        // if (result9 < bigBoy) {
-        //     valsAtPix2[k] = result9;
-        // }
-        // else {
-        //     valsAtPix2[k] = 0.0;
-        // }
     }
     
     return valsAtPix2;

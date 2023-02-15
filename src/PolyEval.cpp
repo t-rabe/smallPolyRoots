@@ -113,7 +113,7 @@ void PolyEval::createMat2(int startReal, int endReal) {
         for (int m=0; m<imgSize; m++) {
             realVal = realSpaced[k];
             imgVal = imgSpaced[m];
-            tempVect = kit.horner9(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal}, bigBoy);
+            tempVect = kit.horner9(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal});
             multPixValVect[k][m].swap(tempVect);
         }
     }
@@ -129,7 +129,7 @@ void PolyEval::createMat3(int startReal, int endReal) {
             realVal = realSpaced[k];
             imgVal = imgSpaced[m];
             multPixValArr[k][m] = new float[numOfPoly];
-            multPixValArr[k][m] = kit.horner8(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal}, bigBoy);
+            multPixValArr[k][m] = kit.horner8(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal});
         }
     }
     // delete tempArr;
@@ -300,8 +300,6 @@ void PolyEval::evalPixel(int startReal, int endReal) {
 
     for (int k=startReal; k<endReal; k++) {
         for (int m=0; m<imgSize; m++) {
-            // currLoc = {realSpaced[k],imgSpaced[m]};
-            // tempCoeffs = kit.horner7(vectPolyToUse, polySize, {realSpaced[k],imgSpaced[m]});
             realVal = realSpaced[k];
             imgVal = imgSpaced[m];
             loc = {realVal,imgVal};
@@ -310,7 +308,7 @@ void PolyEval::evalPixel(int startReal, int endReal) {
             // tolerance = k *1.0;
             if (abs(kit.horner7(vectPolyToUse, polySize, {realVal,imgVal}, bigBoy)) < tolerance) {
                 binCountVect[k][m] ++;
-                rootNum++;
+                rootNum ++;
             }
         }
     }
