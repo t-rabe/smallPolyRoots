@@ -169,7 +169,8 @@ void PolyEval::findAllMins(int startPoly, int endPoly) {
                 bott = multPixValVect[k+1][m][n];
                 tota = curr+top+left+right+bott;
                 // cout << curr << ' ' << top << ' ' << left << ' ' << right << ' ' << bott << '\n';
-                if ((tota>0) && (curr<=top) && (curr<=left) && (curr<=right) && (curr<=bott)) {
+                // if ((tota>0) && (curr<=top) && (curr<=left) && (curr<=right) && (curr<=bott)) {
+                if ((tota>0) && (curr<top) && (curr<left) && (curr<right) && (curr<bott)) {
                     multBinValVect[k][m][n] ++;
                 }
             }

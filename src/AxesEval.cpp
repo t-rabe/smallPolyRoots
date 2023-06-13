@@ -2,46 +2,38 @@
 
 
 AxesEval::AxesEval(vector<complex<double>> vectPolyToUse_, Tools kit_, vector<double> realSpaced_, vector<double> imgSpaced_,
-                                                int polySize_, int imgSize_, int numSamples_, int numOfPoly_, double bigBoy_) {
+                            bool isVertical_, int polySize_, int imgSize_, int numSamples_, int numOfPoly_, double bigBoy_) {
     vectPolyToUse = vectPolyToUse_;
     kit = kit_;
     realSpaced = realSpaced_;
     imgSpaced = imgSpaced_;
-    stepSize = realSpaced[10] - realSpaced[9];
+    isVertical = isVertical_;
     polySize = polySize_;
-    imgSize = imgSize_ -1;
-    halfImgSize = (imgSize_ /2) -1;
+    imgSize = imgSize_;
     numSamples = numSamples_;
     numOfPoly = numOfPoly_;
     bigBoy = bigBoy_;
     realSpan = floor(imgSize_ /numSamples_);
     polySpan = max(int(floor(numOfPoly /numSamples)), 1);
-
     // creates a 2d vector with (real x img) indices
 
-    for (int h=0; h<imgSize; h++) {
-        vector<unsigned short int> interMed0(imgSize,0);
-        totBinCountVect.push_back(interMed0);
-    }
+    // for (int h=0; h<imgSize; h++) {
+    //     totBinCountVect.push_back(vector<unsigned short int> (imgSize,0));
+    // }
 
-    for (int i=0; i<3; i++) {
-        vector<vector<float>> interMed1((imgSize+1), vector<float>(numOfPoly, 0.0));
-        imgPixValVect.push_back(interMed1);
+    if (isVertical) {
+        for (int i=0; i<imgSize; i++) {
+            pixValVect.push_back(vector<vector<float>>(3, vector<float>(numOfPoly, 0.0)));
+            multiBinCountVect.push_back(vector<vector<int>>(3, vector<int>(numOfPoly, 0)));
+            totBinCountVect.push_back(vector<int>(3,0));
+        }
     }
-    
-    for (int j=0; j<(imgSize+1); j++) {
-        vector<vector<float>> interMed2(3, vector<float>(numOfPoly, 0.0));
-        realPixValVect.push_back(interMed2);
-    }
-
-    for (int k=0; k<imgSize; k++) {
-        vector<int> interMed3(numOfPoly,0);
-        imgMultiBinCountVect.push_back(interMed3);
-    }
-
-    for (int m=0; m<imgSize; m++) {
-        vector<int> interMed4(numOfPoly, 0);
-        realMultiBinCountVect.push_back(interMed4);
+    else {
+        for (int i=0; i<3; i++) {
+            pixValVect.push_back(vector<vector<float>>(imgSize, vector<float>(numOfPoly, 0.0)));
+            multiBinCountVect.push_back(vector<vector<int>>(imgSize, vector<int>(numOfPoly, 0)));
+            totBinCountVect.push_back(vector<int>(imgSize,0));
+        }
     }
 }
 
@@ -52,10 +44,10 @@ void AxesEval::imgEvalPixel(int startImg, int endImg) {
 
     for (int k=startImg; k<endImg; k++) {
         for (int m=0; m<3; m++) {
-            realVal = (m-1) *stepSize;
-            imgVal = imgSpaced[k];
+            realVal = realSpaced[k];
+            imgVal = imgSpaced[m];
             // potentially use .swap here? look at QuartPolyEval.createMat2()
-            imgPixValVect[m][k] = kit.horner9(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal});
+            pixValVect[m][k] = kit.horner9(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal});
         }
     }
 }
@@ -64,14 +56,16 @@ void AxesEval::imgEvalPixel(int startImg, int endImg) {
 void AxesEval::realEvalPixel(int startReal, int endReal) {
     double realVal = 0.0;
     double imgVal = 0.0;
+    vector<float> tempVect;
 
     for (int k=startReal; k<endReal; k++) {
         for (int m=0; m<3; m++) {
-            realVal = realSpaced[k];
-            imgVal = (m-1) *stepSize;
+            realVal = realSpaced[m];
+            imgVal = imgSpaced[k];
             
             // potentially use .swap here? look at QuartPolyEval.createMat2()
-            realPixValVect[k][m] = kit.horner9(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal});
+            tempVect = kit.horner9(vectPolyToUse, numOfPoly, polySize, {realVal,imgVal});
+            pixValVect[k][m].swap(tempVect);
         }
     }
 }
@@ -84,16 +78,18 @@ void AxesEval::findImgMins(int startPoly, int endPoly) {
     float right;
     float bott;
     float tota;
-    for (int m=1; m<(imgSize-1); m++) {
-        for (int n=startPoly; n<endPoly; n++) {
-            curr = imgPixValVect[1][m][n];
-            top = imgPixValVect[0][m][n];
-            left = imgPixValVect[1][m-1][n];
-            right = imgPixValVect[1][m+1][n];
-            bott = imgPixValVect[2][m][n];
-            tota = curr+top+left+right+bott;
-            if ((tota>0) && (curr<=top) && (curr<=left) && (curr<=right) && (curr<=bott)) {
-                    imgMultiBinCountVect[m][n] ++;
+    for (int k=1; k<2; k++) {
+        for (int m=1; m<(imgSize-1); m++) {
+            for (int n=startPoly; n<endPoly; n++) {
+                curr = pixValVect[k][m][n];
+                top = pixValVect[k-1][m][n];
+                left = pixValVect[k][m-1][n];
+                right = pixValVect[k][m+1][n];
+                bott = pixValVect[k+1][m][n];
+                tota = curr+top+left+right+bott;
+                if ((tota>0) && (curr<top) && (curr<left) && (curr<right) && (curr<bott)) {
+                        multiBinCountVect[k][m][n] ++;
+                }
             }
         }
     }
@@ -108,15 +104,17 @@ void AxesEval::findRealMins(int startPoly, int endPoly) {
     float bott;
     float tota;
     for (int m=1; m<(imgSize-1); m++) {
-        for (int n=startPoly; n<endPoly; n++) {
-            curr = realPixValVect[m][1][n];
-            top = realPixValVect[m][0][n];
-            left = realPixValVect[m-1][1][n];
-            right = realPixValVect[m+1][1][n];
-            bott = realPixValVect[m][2][n];
-            tota = curr+top+left+right+bott;
-            if ((tota>0) && (curr<=top) && (curr<=left) && (curr<=right) && (curr<=bott)) {
-                    realMultiBinCountVect[m][n] ++;
+        for (int k=1; k<2; k++) {
+            for (int n=startPoly; n<endPoly; n++) {
+                curr = pixValVect[m][k][n];
+                top = pixValVect[m][k-1][n];
+                left = pixValVect[m-1][k][n];
+                right = pixValVect[m+1][k][n];
+                bott = pixValVect[m][k+1][n];
+                tota = curr+top+left+right+bott;
+                if ((tota>0) && (curr<top) && (curr<left) && (curr<right) && (curr<bott)) {
+                    multiBinCountVect[m][k][n] ++;
+                }
             }
         }
     }
@@ -183,48 +181,37 @@ void AxesEval::threadSafe_Sample4() {
 }
 
 // Used to create a single matrix of max vals from MULTIPLE POLYNOMIALS AS ARRAY
-void AxesEval::combineAxes() {
-    // cout << "Combining axes..." << endl;
+void AxesEval::vertCombineAxes() {
+    for (int p=0; p<imgSize; p++) {
+        for (int f=0; f<3; f++) {
+            for (int z=0; z<numOfPoly; z++) {
+                totBinCountVect[p][f] += multiBinCountVect[p][f][z];
+            }
+        }
+    }
+}
 
-    int binCount;
-    vector<int> fillerZeros(halfImgSize, 0);
-    
-    // writes the top half of img axis
-    for (int x=0; x<halfImgSize; x++) {
-        binCount = 0;
-        for (int i=0; i<numOfPoly; i++) {
-            binCount += imgMultiBinCountVect[x][i];
+void AxesEval::horiCombineAxes() {
+    for (int p=0; p<3; p++) {
+        for (int f=0; f<imgSize; f++) {
+            for (int z=0; z<numOfPoly; z++) {
+                totBinCountVect[p][f] += multiBinCountVect[p][f][z];
+            }
         }
-        totBinCountVect[x][halfImgSize] = binCount;
     }
-    // this part writes the real axis
-    for (int y=0; y<imgSize; y++) {
-        binCount = 0;
-        for (int j=0; j<numOfPoly; j++) {
-            binCount += realMultiBinCountVect[y][j];
-        }
-        totBinCountVect[halfImgSize][y] = binCount;
-        // if (binCount > 0) {
-        //     cout << "bin count nonzero\n";
-        // }
-    }
-    // writes the bottom half of img axis
-    for (int z=0; z<halfImgSize; z++) {
-        binCount = 0;
-        for (int k=0; k<numOfPoly; k++) {
-            binCount += imgMultiBinCountVect[z+halfImgSize+1][k];
-        }
-        totBinCountVect[z+halfImgSize+1][halfImgSize] = binCount;
-    }
-
 }
 
 // returns bin count from original method (tolerances, no local mins)
-vector<vector<unsigned short >> AxesEval::getBinCount() {
-    threadSafe_Sample();
+vector<vector<int>> AxesEval::vertGetBinCount() {
     threadSafe_Sample2();
-    threadSafe_Sample3();
     threadSafe_Sample4();
-    combineAxes();
+    vertCombineAxes();
+    return totBinCountVect;
+}
+
+vector<vector<int>> AxesEval::horiGetBinCount() {
+    threadSafe_Sample();
+    threadSafe_Sample3();
+    horiCombineAxes();
     return totBinCountVect;
 }

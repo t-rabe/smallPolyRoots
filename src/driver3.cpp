@@ -27,7 +27,7 @@ using namespace std;
  * NOTE: The difference is that this driver is made to read from a single LARGE file and write
  * to a single file. It updates an array saved in memory and writes the file at the end.
  * The file which is read is a 2D .csv with each row representing the coeffs of a single characteristic
- * polynomial
+ * polynomial. GENERALLY, USER driver2.cpp !!!!
  *
  * @return int
  */
@@ -35,22 +35,24 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     auto comeca0 = std::chrono::high_resolution_clock::now();
-    string outFileNum = argv[1];
-    int bNumber = 1; // the file number to read data in from
+    string inFileName = argv[1];
+    string outFileName = argv[2];
+    string scratchFile = argv[3];
+    // int bNumber = 1; // the file number to read data in from
 
     // ideally sideLen is an odd number so that the middle val lands on a single pixel
-    int sideLen = 243; // side length (in pixels) of the resulting image. Should be a multiple of numSamples
-    int polySize = 13; // degree of the polynomial to be used
-    int numSamples = 9; // how many threads to use
-    int numPolys = 500; // NEEDS TO BE LARGER THAN NUMSAMPLES !!!!!
-    int numIters = 5; // how many times to evaluate the polynomials (numPolys per iteration)
+    int sideLen = 945; // side length (in pixels) of the resulting image. Should be a multiple of numSamples
+    int polySize = 4; // degree of the polynomial to be used + 1 (for the coeff of x^0)
+    int numSamples = 63; // how many threads to use
+    int numPolys = 64; // NEEDS TO BE LARGER THAN NUMSAMPLES !!!!!
+    int numIters = 1; // how many times to evaluate the polynomials (numPolys per iteration)
     int coeffSize = (polySize *numPolys); // num coeffs to load for real/img
-    int offset = 0; // param to start further into the in file (if a part of it has already been done)
     int lineNum = 0; // line being read from in file
+    int offset = stoi(argv[4]) * polySize; // param to start further into the in file (if a part of it has already been done)
     bool polyIsArr = false;
     string multiCoeffs; // stores a row at a time from in file
     string coeff; // stores a single coeff at a time from in file
-    string outFileName = "243_500_matrix_2Dfile_";
+    // string outFileName = "243_500_matrix_2Dfile_";
 
     Tools kit;
 
@@ -63,8 +65,12 @@ int main(int argc, char *argv[])
     vector<vector<unsigned short int>> partBinVect;
     vector<double> realSpaced = kit.linspace(-6.0,6.0,sideLen);
     vector<double> imgSpaced = kit.linspace(-6.0,6.0,sideLen);
+    // vector<double> realSpaced = kit.linspace(2.5,3.3,sideLen);
+    // vector<double> imgSpaced = kit.linspace(4.1,5.9,sideLen);
     vector<double> realP; // real part of each coeff
     vector<double> imgP; // complex part of each coeff
+    // vector<int> allRealP; // all of the real coeffs saved in one vector
+    // vector<double> allImgP; // all of the complex coeffs saved in one vector
     double largeNum = pow(10,300); // upper bound for polyEval vals (above ~ infinity)
 
     auto dateTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
@@ -78,15 +84,74 @@ int main(int argc, char *argv[])
     auto durationBatch = std::chrono::duration_cast<std::chrono::minutes>(fimBatch-comecaBatch);
     
     ifstream coeffFile;
-    string name = "../coeffFiles/charPolyCoeffs2D_Big" + to_string(bNumber) + ".csv";
+    string name = "../coeffFiles/" + inFileName; // for use with normal desktop
+    // string name = "../../../.." + scratchFile + "/" + inFileName; // for use on hpc
 
+// ######################### START READ BIN FILE ###############################
+    FILE * pFile;
+    long unsigned lSize;
+    int * buffer;
+    size_t result;
+    int numCount;
+
+    pFile = fopen (name.c_str(), "rb" );
+    if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
+
+    // obtain file size:
+    fseek (pFile , 0 , SEEK_END);
+    lSize = ftell (pFile);
+    rewind (pFile);
+
+    // allocate memory to contain the whole file:
+    buffer = (int*) malloc (sizeof(int)*lSize);
+    if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
+
+    // copy the file into the buffer:
+    result = fread (buffer,1,lSize,pFile);
+    if (result != lSize) {fputs ("Reading error",stderr); exit (3);}
+
+    numCount = (lSize / sizeof(buffer[0]));
+    vector<int> allRealP(buffer, buffer+numCount);
+    // cout << allRealP.size() << endl;
+    fclose (pFile);
+    free (buffer);
+// ########################## END READ BIN FILE ################################
+
+// ######################### START READ CSV FILE ###############################
+    // multiCoeffs.clear();
+    // lineNum = 0;        
+    // coeffFile.clear();
+    // coeffFile.open(name); // file holding old coeffs
+    // vector<int> allRealP;
+    
+    // if (coeffFile.is_open()) {
+    //     while (coeffFile) {
+    //         getline(coeffFile,multiCoeffs);
+    //         istringstream row(multiCoeffs);
+    //         coeff.clear();
+    //         do {
+    //             if (coeff != "") {
+    //                 allRealP.push_back(stoi(coeff));
+    //                 // allImgP.push_back(0.0); // uncomment to keep real coeffs
+    //             }
+    //             getline(row,coeff,',');
+    //         } while (row);
+            
+    //         // else if (lineNum < (coeffSize*2)) {
+    //         //      imgP.push_back(coeffDoub); // uncomment to add complex coeffs
+    //         // }
+    //     }
+    // }  
+    // coeffFile.close();
+// ############################ END READ CSV FILE ####################################
+    
     for (int b=0; b<numIters; b++) {
         comeca = std::chrono::high_resolution_clock::now();
         cout << "Starting iteration # " << to_string(b+1) << "/" << to_string(numIters) <<
             " at T = " << std::chrono::duration_cast<std::chrono::minutes>(comeca-comeca0).count()
-            << " mins...\n";
+            << " mins..." << endl;
 
-        int startPoly = b*numPolys;
+        int startPoly = b*coeffSize;
         
         vectPolyToUse.clear();
         partBinVect.clear();
@@ -96,38 +161,14 @@ int main(int argc, char *argv[])
         */
         realP.clear();
         imgP.clear();
-        multiCoeffs.clear();
-        // lineNum = 0;        
-        coeffFile.clear();
-        coeffFile.open(name); // file holding old coeffs
+        lineNum = offset+startPoly; // index for the first coeffs of the batch      
         
-        // coeffFile.seekg(0, ios::beg);
-        if (coeffFile.is_open()) {
-            while (coeffFile) {
-                if ((lineNum>=(offset+startPoly)) && (lineNum < (numPolys+offset+startPoly))) {
-                    getline(coeffFile,multiCoeffs);
-                    istringstream row(multiCoeffs);
-                    coeff.clear();
-                    do {
-                        if (coeff != "") {
-                            realP.push_back(stod(coeff));
-                            imgP.push_back(0.0); // uncomment to keep real coeffs
-                        }
-                        getline(row,coeff,',');
-                    } while (row);
-                }
-                
-                // else if (lineNum < (coeffSize*2)) {
-                //      imgP.push_back(coeffDoub); // uncomment to add complex coeffs
-                // }
-                lineNum ++;
-                if (lineNum == (numPolys+offset+startPoly)) {
-                    break;
-                }
-            }
+        while (lineNum < (coeffSize+offset+startPoly)) {
+            realP.push_back(allRealP[lineNum] *1.0);
+            imgP.push_back(0.0); // uncomment to keep real coeffs
+            lineNum ++;
         }
         
-        coeffFile.close();
         Polynomial polynomial(realP, imgP, coeffSize, polyIsArr);
         vectPolyToUse = polynomial.getVectPoly();
         PolyEval polyeval(vectPolyToUse,kit,realSpaced,imgSpaced,polySize,sideLen,numSamples,numPolys,largeNum);
@@ -233,7 +274,8 @@ int main(int argc, char *argv[])
         // }
     }
     
-    string fileName = "../output/" + outFileName + "_" + outFileNum + ".csv";
+    string fileName = "../output/" + outFileName; // for general use
+    // string fileName = "../../../.." + scratchFile + "/" + outFileName; // for use with scratch on hpc
     ofstream myFile;
     myFile.open(fileName);
     for (int g=0; g<sideLen; g++) {

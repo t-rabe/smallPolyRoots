@@ -80,6 +80,46 @@ file(GLOB USER_FILES_3
 )
 
 file(GLOB USER_FILES_4
+"./src/driver4.cpp"
+"./src/PolyEval.cpp"
+"./headers/PolyEval.hpp"
+"./src/HalfPolyEval.cpp"
+"./headers/HalfPolyEval.hpp"
+"./src/QuartPolyEval.cpp"
+"./headers/QuartPolyEval.hpp"
+"./src/FlatHalfPoly.cpp"
+"./headers/FlatHalfPoly.hpp"
+"./src/Polynomial.cpp"
+"./headers/Polynomial.hpp"
+"./src/RandCoeffs.cpp"
+"./headers/RandCoeffs.hpp"
+"./src/tools.cpp"
+"./headers/tools.hpp"
+"./src/AxesEval.cpp"
+"./headers/AxesEval.hpp"
+)
+
+file(GLOB USER_FILES_5
+"./src/driver5.cpp"
+"./src/PolyEval.cpp"
+"./headers/PolyEval.hpp"
+"./src/HalfPolyEval.cpp"
+"./headers/HalfPolyEval.hpp"
+"./src/QuartPolyEval.cpp"
+"./headers/QuartPolyEval.hpp"
+"./src/FlatHalfPoly.cpp"
+"./headers/FlatHalfPoly.hpp"
+"./src/Polynomial.cpp"
+"./headers/Polynomial.hpp"
+"./src/RandCoeffs.cpp"
+"./headers/RandCoeffs.hpp"
+"./src/tools.cpp"
+"./headers/tools.hpp"
+"./src/AxesEval.cpp"
+"./headers/AxesEval.hpp"
+)
+
+file(GLOB USER_FILES_6
 "./src/getMatElems.cpp"
 )
 
@@ -107,20 +147,28 @@ file(GLOB USER_FILES_4
 # 	${CMAKE_CURRENT_BINARY_DIR}/googletest-build
 # 		EXCLUDE_FROM_ALL)
 
-# create an executable for driver 
+# create an executable for driver
 add_executable( run_driver ${USER_FILES_1} )
 target_link_libraries( run_driver)
 
-# create an executable for driver2 
+# create an executable for driver2
 add_executable( second_run_driver ${USER_FILES_2} )
 target_link_libraries( second_run_driver)
 
-# create an executable for driver3 
+# create an executable for driver3
 add_executable( third_run_driver ${USER_FILES_3} )
 target_link_libraries( third_run_driver)
 
+# create an executable for driver4
+add_executable( fourth_run_driver ${USER_FILES_4} )
+target_link_libraries( fourth_run_driver)
+
+# create an executable for driver5
+add_executable( fifth_run_driver ${USER_FILES_5} )
+target_link_libraries( fifth_run_driver)
+
 # create an executable for getMatElems
-add_executable( get_mat_driver ${USER_FILES_4} )
+add_executable( get_mat_driver ${USER_FILES_6} )
 target_link_libraries( get_mat_driver)
 
 # create an executable for DFGF_S1 tests 
