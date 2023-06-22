@@ -1,4 +1,6 @@
 # smallPolyRoots
+NOTE: Only run the `C++` portion of the repository on a supercomputer with large amounts of memory. The program is highly multithreaded and requires significantly more RAM than a typical codebase would.
+
 ### Purpose
 Create a scatter plot on the complex plane which represents the roots to the characteristic polynomials of all possible matrices of a certain form.
 For example, there are 33,554,432 matrices of size 5x5 that are filled with values -1 and 1. Each of these matrices has a characteristic polynomial with degree 5.
